@@ -291,18 +291,46 @@ function buildRsvpLink({ txnId, name, email, ticketName, src }) {
 
 // ── Email HTML builder ────────────────────────────────────────────
 function getEmailHtml(name, ticketName, rsvpLink) {
-  // Try to read the template file; fall back to inline
   const templatePath = path.join(__dirname, '../public/rsvp_email_template.html');
+ 
+  // Build the base RSVP URL with all params baked in
+  // rsvpLink already contains ?tid=...&name=...&email=...&pass=...&src=email
+  // We just need to append &confirm=YES or &confirm=NO — done in the template
+ 
   if (fs.existsSync(templatePath)) {
     return fs.readFileSync(templatePath, 'utf-8')
-      .replace(/{{NAME}}/g,        name        || 'there')
-      .replace(/{{PASS}}/g,        ticketName  || 'Booyah Pass')
-      .replace(/{{TICKET_ID}}/g,   '')
+      // Text placeholders
+      .replace(/{{NAME}}/g,       name       || 'there')
+      .replace(/{{PASS}}/g,       ticketName || 'Booyah Pass')
+      .replace(/{{TICKET_ID}}/g,  extractParam(rsvpLink, 'tid'))
+ 
+      // URL-encoded placeholders used inside the href query strings
+      .replace(/{{NAME_ENC}}/g,   encodeURIComponent(name       || ''))
+      .replace(/{{EMAIL_ENC}}/g,  encodeURIComponent(extractParam(rsvpLink, 'email') || ''))
+      .replace(/{{PASS_ENC}}/g,   encodeURIComponent(ticketName || 'Booyah Pass'))
+ 
+      // Keep legacy YES/NO link placeholders working too (in case you switch back)
       .replace(/{{RSVP_YES_LINK}}/g, rsvpLink + '&confirm=YES')
-      .replace(/{{RSVP_NO_LINK}}/g,  rsvpLink + '&confirm=NO');
+      .replace(/{{RSVP_NO_LINK}}/g,  rsvpLink + '&confirm=NO')
+ 
+      // Unsubscribe — replace with your real unsubscribe URL if you have one
+      .replace(/{{UNSUBSCRIBE_LINK}}/g, '#');
   }
-  // Minimal fallback
-  return `<p>Hi ${name},</p><p>Confirm your attendance for The Booyah Awards 2026:</p><p><a href="${rsvpLink}">Click here to RSVP</a></p>`;
+ 
+  // Minimal fallback if template file missing
+  return `<p>Hi ${name},</p>
+<p>Confirm your attendance for <strong>The Booyah Awards 2026</strong>:</p>
+<p><a href="${rsvpLink}&confirm=YES">Yes, I'll be there</a> &nbsp;|&nbsp; <a href="${rsvpLink}&confirm=NO">Can't make it</a></p>`;
+}
+ 
+// Helper — pull a param value out of a URL string
+function extractParam(url, key) {
+  try {
+    return new URL(url).searchParams.get(key) || '';
+  } catch(e) {
+    const match = url.match(new RegExp('[?&]' + key + '=([^&]*)'));
+    return match ? decodeURIComponent(match[1]) : '';
+  }
 }
 
 // ── Health check ─────────────────────────────────────────────────

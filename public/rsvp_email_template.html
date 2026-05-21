@@ -20,8 +20,8 @@
   <!-- HERO BANNER -->
   <tr>
     <td style="border-radius:20px 20px 0 0;overflow:hidden;border:1px solid rgba(255,255,255,0.07);border-bottom:none;line-height:0;font-size:0;">
-      <img src="https://drive.google.com/uc?export=view&id=1W9puPmjO8Mm8-PkaBx9lRzqM4DQlU5oA"
-     width="580" style="display:block;width:100%;border-radius:20px 20px 0 0;" alt="The Booyah Awards 2026">
+      <img src="https://res.cloudinary.com/dopqilo8o/image/upload/q_auto/f_auto/v1779379488/WhatsApp_Image_2026-05-21_at_4.30.13_PM_b4cofs.jpg"
+           width="580" style="display:block;width:100%;border-radius:20px 20px 0 0;" alt="The Booyah Awards 2026">
     </td>
   </tr>
 
@@ -163,10 +163,12 @@
 
       <div style="font-size:10px;color:#7A748F;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;font-weight:600;">Confirm Your Attendance</div>
 
+      <!-- YES — opens RSVP page, auto-confirms YES -->
       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:10px;">
         <tr>
           <td align="center">
-            <a href="{{RSVP_YES_LINK}}" target="_blank"
+            <a href="https://booyah-rsvp.onrender.com/rsvp.html?tid={{TICKET_ID}}&name={{NAME_ENC}}&email={{EMAIL_ENC}}&pass={{PASS_ENC}}&src=email&confirm=YES"
+               target="_blank"
                style="display:block;width:100%;background:#F5C842;color:#0C0A14;text-decoration:none;font-size:16px;font-weight:800;padding:17px 24px;border-radius:13px;text-align:center;letter-spacing:0.3px;box-sizing:border-box;font-family:'Arial Black','Helvetica Neue',Arial,sans-serif;">
               Yes, I'll be there
             </a>
@@ -174,10 +176,12 @@
         </tr>
       </table>
 
+      <!-- NO — opens RSVP page, auto-confirms NO -->
       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:22px;">
         <tr>
           <td align="center">
-            <a href="{{RSVP_NO_LINK}}" target="_blank"
+            <a href="https://booyah-rsvp.onrender.com/rsvp.html?tid={{TICKET_ID}}&name={{NAME_ENC}}&email={{EMAIL_ENC}}&pass={{PASS_ENC}}&src=email&confirm=NO"
+               target="_blank"
                style="display:block;width:100%;background:transparent;color:#7A748F;text-decoration:none;font-size:14px;font-weight:500;padding:14px 24px;border-radius:13px;text-align:center;border:1px solid rgba(255,255,255,0.09);box-sizing:border-box;">
               Can't make it
             </a>
