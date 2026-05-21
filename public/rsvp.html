@@ -309,13 +309,11 @@
 </div>
 
 <script>
-  // ─────────────────────────────────────────────────────────────
-  // Fetch Google Apps Script URL from backend config
-  // ─────────────────────────────────────────────────────────────
-  let SCRIPT_URL = null;
-
   lucide.createIcons();
 
+  // ─────────────────────────────────────────────────────────────
+  // URL PARAMS
+  // ─────────────────────────────────────────────────────────────
   const p     = new URLSearchParams(window.location.search);
   const tid   = p.get('tid')   || 'TCK-DEMO';
   const name  = decodeURIComponent(p.get('name')  || 'Attendee');
@@ -328,104 +326,165 @@
   document.getElementById('passEl').textContent     = pass;
   document.getElementById('passMetaEl').textContent = pass;
   document.getElementById('tidEl').textContent      = tid;
-  document.getElementById('avatarEl').textContent   =
-    name.trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-  document.getElementById('sourceEl').textContent   =
-    src === 'wa' ? 'WhatsApp' : src === 'email' ? 'Email' : 'Direct';
+
+  document.getElementById('avatarEl').textContent =
+    name.trim()
+      .split(' ')
+      .map(w => w[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+
+  document.getElementById('sourceEl').textContent =
+    src === 'wa'
+      ? 'WhatsApp'
+      : src === 'email'
+      ? 'Email'
+      : 'Direct';
 
   const preConfirm = p.get('confirm');
 
-  // ── FETCH CONFIG FROM SERVER ─────────────────────────────────
-  async function initConfig() {
+  // ─────────────────────────────────────────────────────────────
+  // LOAD EXISTING RSVP STATUS
+  // ─────────────────────────────────────────────────────────────
+  async function loadStatus() {
     try {
-      const r = await fetch('/api/config');
-      const cfg = await r.json();
-      SCRIPT_URL = cfg.GOOGLE_SCRIPT_URL;
-      if (!SCRIPT_URL) throw new Error('No GOOGLE_SCRIPT_URL in config');
-      console.log('✅ Config loaded');
-      return true;
-    } catch(e) {
-      console.error('❌ Config load failed:', e.message);
-      document.getElementById('errorBox').textContent = 'Failed to load configuration. Please refresh.';
-      document.getElementById('errorBox').style.display = 'block';
-      return false;
+      const r = await fetch(
+        `/api/rsvp/status?tid=${encodeURIComponent(tid)}`
+      );
+
+      const d = await r.json();
+
+      if (d.status === 'ok') {
+        showStatus(d.current);
+      }
+    } catch (e) {
+      console.error('Status load failed:', e);
     }
   }
 
-  // ── LOAD EXISTING STATUS ON PAGE OPEN ────────────────────────
-  async function loadStatus() {
-    try {
-      const url = `${SCRIPT_URL}?action=get&tid=${encodeURIComponent(tid)}`;
-      const r   = await fetch(url);
-      const d   = await r.json();
-      if (d.status === 'ok') showStatus(d.current);
-    } catch(e) {}
-  }
-
+  // ─────────────────────────────────────────────────────────────
+  // SHOW RSVP STATUS
+  // ─────────────────────────────────────────────────────────────
   function showStatus(c) {
     if (!c) return;
-    document.getElementById('yesBar').classList.toggle('show', c.response === 'YES');
-    document.getElementById('noBar').classList.toggle('show',  c.response === 'NO');
-    document.getElementById('yesTime').textContent = 'Last updated: ' + c.time;
-    document.getElementById('noTime').textContent  = 'Last updated: ' + c.time;
-    document.getElementById('yesBtn').classList.toggle('yes-active', c.response === 'YES');
-    document.getElementById('noBtn').classList.toggle('no-active',   c.response === 'NO');
+
+    document
+      .getElementById('yesBar')
+      .classList.toggle('show', c.response === 'YES');
+
+    document
+      .getElementById('noBar')
+      .classList.toggle('show', c.response === 'NO');
+
+    document.getElementById('yesTime').textContent =
+      'Last updated: ' + c.time;
+
+    document.getElementById('noTime').textContent =
+      'Last updated: ' + c.time;
+
+    document
+      .getElementById('yesBtn')
+      .classList.toggle('yes-active', c.response === 'YES');
+
+    document
+      .getElementById('noBtn')
+      .classList.toggle('no-active', c.response === 'NO');
   }
 
-  // ── SUBMIT RSVP ──────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────
+  // SUBMIT RSVP
+  // ─────────────────────────────────────────────────────────────
   let busy = false;
+
   async function submitRSVP(resp) {
     if (busy) return;
+
     busy = true;
+
     const yb = document.getElementById('yesBtn');
     const nb = document.getElementById('noBtn');
-    yb.disabled = nb.disabled = true;
+
+    yb.disabled = true;
+    nb.disabled = true;
+
     document.getElementById('loadingEl').style.display = 'block';
     document.getElementById('errorBox').style.display  = 'none';
+
     document.getElementById('yesBar').classList.remove('show');
     document.getElementById('noBar').classList.remove('show');
+
     yb.classList.remove('yes-active');
     nb.classList.remove('no-active');
 
     try {
-      const r = await fetch(SCRIPT_URL, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const r = await fetch('/api/rsvp/respond', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
-          action:   'rsvp',
-          tid, name, email, pass,
+          tid,
+          name,
+          email,
+          pass,
           response: resp,
-          source:   src,
-          ua:       navigator.userAgent,
-          ts:       new Date().toISOString()
+          source: src,
+          ua: navigator.userAgent,
+          ts: new Date().toISOString()
         })
       });
+
       const d = await r.json();
+
       document.getElementById('loadingEl').style.display = 'none';
+
       if (d.status === 'ok') {
-        showStatus({ response: resp, time: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) });
+        showStatus({
+          response: resp,
+          time: new Date().toLocaleString('en-IN', {
+            timeZone: 'Asia/Kolkata'
+          })
+        });
       } else {
         const eb = document.getElementById('errorBox');
-        eb.textContent = d.message || 'Something went wrong.';
+
+        eb.textContent =
+          d.message || 'Something went wrong.';
+
         eb.style.display = 'block';
       }
-    } catch(e) {
+    } catch (e) {
+      console.error('RSVP submit failed:', e);
+
       document.getElementById('loadingEl').style.display = 'none';
+
       const eb = document.getElementById('errorBox');
-      eb.textContent = 'Network error. Please try again.';
+
+      eb.textContent =
+        'Network error. Please try again.';
+
       eb.style.display = 'block';
     }
-    yb.disabled = nb.disabled = busy = false;
+
+    yb.disabled = false;
+    nb.disabled = false;
+    busy = false;
   }
 
-  // ── INITIALIZE ON PAGE LOAD ──────────────────────────────────
+  // ─────────────────────────────────────────────────────────────
+  // INITIALIZE
+  // ─────────────────────────────────────────────────────────────
   async function init() {
-    const ok = await initConfig();
-    if (ok) {
-      await loadStatus();
-      if (preConfirm === 'YES' || preConfirm === 'NO') {
-        setTimeout(() => submitRSVP(preConfirm), 600);
-      }
+    await loadStatus();
+
+    if (
+      preConfirm === 'YES' ||
+      preConfirm === 'NO'
+    ) {
+      setTimeout(() => {
+        submitRSVP(preConfirm);
+      }, 600);
     }
   }
 
