@@ -10,7 +10,6 @@
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --color-bg: #0C0A14;
     --color-surface: #841e9e33;
@@ -26,7 +25,6 @@
     --color-red-val: #E63B2E;
     --color-red-bg: rgba(230,59,46,0.1);
   }
-
   body {
     background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(123,63,190,0.18) 0%, transparent 55%), var(--color-bg);
     color: var(--color-body);
@@ -37,87 +35,33 @@
     align-items: center;
     padding-bottom: 64px;
   }
-
   .font-display { font-family: 'Bebas Neue', sans-serif; }
   .wrap { width: 100%; max-width: 480px; padding: 0 1rem; }
-
-  .banner {
-    position: relative;
-    width: calc(100% + 2rem);
-    margin: 0 -1rem 0.25rem;
-    border-radius: 16px;
-  }
+  .banner { position: relative; width: calc(100% + 2rem); margin: 0 -1rem 0.25rem; border-radius: 16px; }
   .banner img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; border-radius: 16px; }
   .banner-fade { position: absolute; inset: 0; }
-
-  .card {
-    background: var(--color-surface);
-    border: 0.5px solid var(--color-border);
-    border-radius: 16px;
-    padding: 1.25rem;
-    margin-bottom: .75rem;
-  }
-
+  .card { background: var(--color-surface); border: 0.5px solid var(--color-border); border-radius: 16px; padding: 1.25rem; margin-bottom: .75rem; }
   .attendee-row { display: flex; align-items: center; gap: 12px; }
-  .avatar {
-    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg, rgba(123,63,190,0.6), rgba(245,200,66,0.4));
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', sans-serif; font-size: 17px; color: #fff;
-  }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, rgba(123,63,190,0.6), rgba(245,200,66,0.4)); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 17px; color: #fff; }
   .attendee-name { font-size: 15px; font-weight: 600; color: var(--color-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .attendee-email { font-size: 12px; color: var(--color-gold); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .pass-badge {
-    margin-left: auto; flex-shrink: 0;
-    font-size: 11px; font-weight: 600;
-    color: var(--color-gold);
-    background: rgba(245,200,66,0.13);
-    border: 0.5px solid rgba(245,200,66,0.28);
-    padding: 4px 10px; border-radius: 6px;
-  }
-
-  .status-bar {
-    display: none; align-items: center; gap: 12px;
-    border-radius: 12px; padding: .75rem 1rem;
-    margin-bottom: .75rem; font-size: 14px;
-  }
+  .pass-badge { margin-left: auto; flex-shrink: 0; font-size: 11px; font-weight: 600; color: var(--color-gold); background: rgba(245,200,66,0.13); border: 0.5px solid rgba(245,200,66,0.28); padding: 4px 10px; border-radius: 6px; }
+  .status-bar { display: none; align-items: center; gap: 12px; border-radius: 12px; padding: .75rem 1rem; margin-bottom: .75rem; font-size: 14px; }
   .status-bar.show { display: flex; }
-  .status-bar.yes-bar {
-    background: var(--color-green-bg);
-    border: 1px solid rgba(46,204,130,0.3);
-    color: var(--color-green);
-  }
-  .status-bar.no-bar {
-    background: var(--color-red-bg);
-    border: 0.5px solid rgba(230,59,46,0.3);
-    color: var(--color-red-val);
-  }
+  .status-bar.yes-bar { background: var(--color-green-bg); border: 1px solid rgba(46,204,130,0.3); color: var(--color-green); }
+  .status-bar.no-bar { background: var(--color-red-bg); border: 0.5px solid rgba(230,59,46,0.3); color: var(--color-red-val); }
   .status-bar .s-icon { display: flex; align-items: center; flex-shrink: 0; }
   .status-bar .s-title { font-weight: 600; }
   .status-bar .s-time { font-size: 11px; opacity: .7; margin-top: 1px; }
-
-  .sec-label {
-    font-size: 11px; letter-spacing: 1.5px;
-    text-transform: uppercase; color: var(--color-muted);
-    margin-bottom: .75rem;
-  }
-
+  .sec-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--color-muted); margin-bottom: .75rem; }
   .rsvp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: .75rem; }
-  .rsvp-btn {
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    padding: 1.1rem .75rem;
-    border-radius: 14px;
-    cursor: pointer;
-    transition: background .15s, border-color .15s, transform .1s, color .15s;
-  }
+  .rsvp-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 1.1rem .75rem; border-radius: 14px; cursor: pointer; transition: background .15s, border-color .15s, transform .1s, color .15s; }
   .rsvp-btn:active { transform: scale(.97); }
-
   .yesbtn { border: 1px solid var(--color-gold); color: #0C0A14; background: var(--color-gold); }
   .yesbtn .btn-label { color: #0C0A14; }
   .yesbtn .btn-sub { color: rgba(12,10,20,0.6); }
   .yesbtn .btn-icon-wrap { color: #0C0A14; }
   .yesbtn:hover { background: #01a839ef; border-color: #01a839; }
-
   .nobtn { border: 1px solid var(--color-gold); color: var(--color-gold); background: transparent; }
   .nobtn .btn-label { color: var(--color-gold); }
   .nobtn .btn-sub { color: var(--color-muted); }
@@ -125,7 +69,6 @@
   .nobtn:hover { background: var(--color-red-bg); border-color: var(--color-red-val); }
   .nobtn:hover .btn-label { color: var(--color-red-val); }
   .nobtn:hover .btn-icon-wrap { color: var(--color-red-val); }
-
   .rsvp-btn.yes-active { background: var(--color-green-bg) !important; border: 1px solid rgba(46,204,130,0.5) !important; }
   .rsvp-btn.yes-active .btn-label { color: var(--color-green) !important; }
   .rsvp-btn.yes-active .btn-icon-wrap { color: var(--color-green) !important; }
@@ -133,62 +76,24 @@
   .rsvp-btn.no-active { background: var(--color-red-bg) !important; border-color: rgba(230,59,46,0.45) !important; }
   .rsvp-btn.no-active .btn-label { color: var(--color-red-val) !important; }
   .rsvp-btn.no-active .btn-icon-wrap { color: var(--color-red-val) !important; }
-
   .btn-icon-wrap { display: flex; align-items: center; justify-content: center; }
   .btn-label { font-size: 15px; font-weight: 600; }
   .btn-sub { font-size: 11px; text-align: center; }
-
   .loading-state { display: none; text-align: center; padding: .75rem; font-size: 13px; color: var(--color-muted); }
-  .error-box {
-    display: none;
-    background: var(--color-red-bg);
-    border: 0.5px solid rgba(230,59,46,0.3);
-    color: var(--color-red-val);
-    padding: .65rem .9rem;
-    border-radius: 8px;
-    font-size: 13px;
-    margin-top: .5rem;
-  }
-
-  .meta-grid {
-    background: var(--color-surface2);
-    border-radius: 10px;
-    padding: .75rem;
-    display: flex; flex-direction: column; gap: 6px;
-    margin-top: .75rem;
-  }
+  .error-box { display: none; background: var(--color-red-bg); border: 0.5px solid rgba(230,59,46,0.3); color: var(--color-red-val); padding: .65rem .9rem; border-radius: 8px; font-size: 13px; margin-top: .5rem; }
+  .meta-grid { background: var(--color-surface2); border-radius: 10px; padding: .75rem; display: flex; flex-direction: column; gap: 6px; margin-top: .75rem; }
   .meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
   .meta-key { color: var(--color-gold); display: flex; align-items: center; gap: 5px; }
   .meta-val { font-weight: 500; color: var(--color-body); font-family: monospace; }
-
-  .detail-row {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: .65rem 0;
-    border-bottom: 0.5px solid var(--color-border);
-  }
+  .detail-row { display: flex; align-items: flex-start; gap: 12px; padding: .65rem 0; border-bottom: 0.5px solid var(--color-border); }
   .detail-row:last-child { border-bottom: none; }
-  .detail-icon {
-    width: 34px; height: 34px; flex-shrink: 0;
-    border-radius: 8px;
-    background: var(--color-surface2);
-    border: 0.5px solid var(--color-border);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--color-gold);
-  }
+  .detail-icon { width: 34px; height: 34px; flex-shrink: 0; border-radius: 8px; background: var(--color-surface2); border: 0.5px solid var(--color-border); display: flex; align-items: center; justify-content: center; color: var(--color-gold); }
   .detail-key { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--color-gold); margin-bottom: 2px; }
   .detail-val { font-size: 13px; font-weight: 500; color: var(--color-body); }
-  .detail-link {
-    font-size: 12px; color: var(--color-purple-lt); text-decoration: none;
-    display: flex; align-items: center; gap: 4px; margin-top: 3px;
-  }
+  .detail-link { font-size: 12px; color: var(--color-purple-lt); text-decoration: none; display: flex; align-items: center; gap: 4px; margin-top: 3px; }
   .detail-link:hover { text-decoration: underline; }
-
-  .footer {
-    text-align: center; font-size: 11px;
-    color: var(--color-muted); letter-spacing: .5px; margin-top: 2rem;
-  }
+  .footer { text-align: center; font-size: 11px; color: var(--color-muted); letter-spacing: .5px; margin-top: 2rem; }
   .footer span { color: var(--color-gold); }
-
   .icon-16 { width: 16px; height: 16px; stroke-width: 1.75; }
   .icon-18 { width: 18px; height: 18px; stroke-width: 1.75; }
   .icon-20 { width: 20px; height: 20px; stroke-width: 1.75; }
@@ -305,15 +210,16 @@
   </div>
 
   <div class="footer"><span>The Booyah Awards 2026</span></div>
-
 </div>
 
 <script>
   lucide.createIcons();
 
   // ─────────────────────────────────────────────────────────────
-  // URL PARAMS
+  // 🔧 REPLACE WITH YOUR DEPLOYED APPS SCRIPT URL
   // ─────────────────────────────────────────────────────────────
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyzOICbUCLU68acEaJhExudJW5rGgfjIvnNwZUCWmRYE1Rlv7z7RgmvAuOEwmUuyPW3HA/exec';
+
   const p     = new URLSearchParams(window.location.search);
   const tid   = p.get('tid')   || 'TCK-DEMO';
   const name  = decodeURIComponent(p.get('name')  || 'Attendee');
@@ -326,165 +232,92 @@
   document.getElementById('passEl').textContent     = pass;
   document.getElementById('passMetaEl').textContent = pass;
   document.getElementById('tidEl').textContent      = tid;
-
-  document.getElementById('avatarEl').textContent =
-    name.trim()
-      .split(' ')
-      .map(w => w[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-
-  document.getElementById('sourceEl').textContent =
-    src === 'wa'
-      ? 'WhatsApp'
-      : src === 'email'
-      ? 'Email'
-      : 'Direct';
+  document.getElementById('avatarEl').textContent   =
+    name.trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  document.getElementById('sourceEl').textContent   =
+    src === 'wa' ? 'WhatsApp' : src === 'email' ? 'Email' : 'Direct';
 
   const preConfirm = p.get('confirm');
 
-  // ─────────────────────────────────────────────────────────────
-  // LOAD EXISTING RSVP STATUS
-  // ─────────────────────────────────────────────────────────────
+  // ── LOAD STATUS — plain GET, no CORS issues ───────────────────
   async function loadStatus() {
     try {
-      const r = await fetch(
-        `/api/rsvp/status?tid=${encodeURIComponent(tid)}`
-      );
-
-      const d = await r.json();
-
-      if (d.status === 'ok') {
-        showStatus(d.current);
-      }
-    } catch (e) {
-      console.error('Status load failed:', e);
+      const url = `${SCRIPT_URL}?action=get&tid=${encodeURIComponent(tid)}`;
+      const r   = await fetch(url);
+      const d   = await r.json();
+      if (d.status === 'ok') showStatus(d.current);
+    } catch(e) {
+      console.warn('loadStatus failed:', e.message);
     }
   }
 
-  // ─────────────────────────────────────────────────────────────
-  // SHOW RSVP STATUS
-  // ─────────────────────────────────────────────────────────────
   function showStatus(c) {
     if (!c) return;
-
-    document
-      .getElementById('yesBar')
-      .classList.toggle('show', c.response === 'YES');
-
-    document
-      .getElementById('noBar')
-      .classList.toggle('show', c.response === 'NO');
-
-    document.getElementById('yesTime').textContent =
-      'Last updated: ' + c.time;
-
-    document.getElementById('noTime').textContent =
-      'Last updated: ' + c.time;
-
-    document
-      .getElementById('yesBtn')
-      .classList.toggle('yes-active', c.response === 'YES');
-
-    document
-      .getElementById('noBtn')
-      .classList.toggle('no-active', c.response === 'NO');
+    document.getElementById('yesBar').classList.toggle('show', c.response === 'YES');
+    document.getElementById('noBar').classList.toggle('show',  c.response === 'NO');
+    document.getElementById('yesTime').textContent = 'Last updated: ' + c.time;
+    document.getElementById('noTime').textContent  = 'Last updated: ' + c.time;
+    document.getElementById('yesBtn').classList.toggle('yes-active', c.response === 'YES');
+    document.getElementById('noBtn').classList.toggle('no-active',   c.response === 'NO');
   }
 
-  // ─────────────────────────────────────────────────────────────
-  // SUBMIT RSVP
-  // ─────────────────────────────────────────────────────────────
+  // ── SUBMIT RSVP — no-cors POST (bypasses CORS preflight) ─────
+  // Apps Script doesn't respond to OPTIONS preflight, so we use
+  // mode:'no-cors' + text/plain body (no preflight triggered).
+  // We can't read the response (opaque), so we show success optimistically.
   let busy = false;
-
   async function submitRSVP(resp) {
     if (busy) return;
-
     busy = true;
-
     const yb = document.getElementById('yesBtn');
     const nb = document.getElementById('noBtn');
-
-    yb.disabled = true;
-    nb.disabled = true;
-
+    yb.disabled = nb.disabled = true;
     document.getElementById('loadingEl').style.display = 'block';
     document.getElementById('errorBox').style.display  = 'none';
-
     document.getElementById('yesBar').classList.remove('show');
     document.getElementById('noBar').classList.remove('show');
-
     yb.classList.remove('yes-active');
     nb.classList.remove('no-active');
 
+    // URLSearchParams body — Apps Script reads via e.parameter
+    const body = new URLSearchParams({
+      action:   'rsvp',
+      tid, name, email, pass,
+      response: resp,
+      source:   src,
+      ua:       navigator.userAgent.slice(0, 200),
+      ts:       new Date().toISOString()
+    });
+
     try {
-      const r = await fetch('/api/rsvp/respond', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          tid,
-          name,
-          email,
-          pass,
-          response: resp,
-          source: src,
-          ua: navigator.userAgent,
-          ts: new Date().toISOString()
-        })
+      await fetch(SCRIPT_URL, {
+        method:  'POST',
+        mode:    'no-cors',           // ← skips OPTIONS preflight
+        headers: { 'Content-Type': 'text/plain' },
+        body:    body.toString()
       });
 
-      const d = await r.json();
-
+      // Can't read opaque response — show success optimistically
       document.getElementById('loadingEl').style.display = 'none';
+      showStatus({
+        response: resp,
+        time: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+      });
 
-      if (d.status === 'ok') {
-        showStatus({
-          response: resp,
-          time: new Date().toLocaleString('en-IN', {
-            timeZone: 'Asia/Kolkata'
-          })
-        });
-      } else {
-        const eb = document.getElementById('errorBox');
-
-        eb.textContent =
-          d.message || 'Something went wrong.';
-
-        eb.style.display = 'block';
-      }
-    } catch (e) {
-      console.error('RSVP submit failed:', e);
-
+    } catch(e) {
       document.getElementById('loadingEl').style.display = 'none';
-
       const eb = document.getElementById('errorBox');
-
-      eb.textContent =
-        'Network error. Please try again.';
-
+      eb.textContent = 'Network error. Please try again.';
       eb.style.display = 'block';
     }
 
-    yb.disabled = false;
-    nb.disabled = false;
-    busy = false;
+    yb.disabled = nb.disabled = busy = false;
   }
 
-  // ─────────────────────────────────────────────────────────────
-  // INITIALIZE
-  // ─────────────────────────────────────────────────────────────
   async function init() {
     await loadStatus();
-
-    if (
-      preConfirm === 'YES' ||
-      preConfirm === 'NO'
-    ) {
-      setTimeout(() => {
-        submitRSVP(preConfirm);
-      }, 600);
+    if (preConfirm === 'YES' || preConfirm === 'NO') {
+      setTimeout(() => submitRSVP(preConfirm), 600);
     }
   }
 
