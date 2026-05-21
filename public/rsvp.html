@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RSVP – The Booyah Awards 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --color-bg: #0C0A14;
+    --color-surface: #841e9e33;
+    --color-surface2: #841e9e25;
+    --color-border: rgba(255,255,255,0.08);
+    --color-border2: rgba(255,255,255,0.14);
+    --color-body: #E8E3F2;
+    --color-muted: #7A748F;
+    --color-gold: #f5c842f1;
+    --color-purple-lt: #A78BFA;
+    --color-green: #2ECC82;
+    --color-green-bg: rgba(0,121,67,0.842);
+    --color-red-val: #E63B2E;
+    --color-red-bg: rgba(230,59,46,0.1);
+  }
+
+  body {
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(123,63,190,0.18) 0%, transparent 55%), var(--color-bg);
+    color: var(--color-body);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 64px;
+  }
+
+  .font-display { font-family: 'Bebas Neue', sans-serif; }
+  .wrap { width: 100%; max-width: 480px; padding: 0 1rem; }
+
+  .banner {
+    position: relative;
+    width: calc(100% + 2rem);
+    margin: 0 -1rem 0.25rem;
+    border-radius: 16px;
+  }
+  .banner img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; border-radius: 16px; }
+  .banner-fade { position: absolute; inset: 0; }
+
+  .card {
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: .75rem;
+  }
+
+  .attendee-row { display: flex; align-items: center; gap: 12px; }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(123,63,190,0.6), rgba(245,200,66,0.4));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 17px; color: #fff;
+  }
+  .attendee-name { font-size: 15px; font-weight: 600; color: var(--color-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .attendee-email { font-size: 12px; color: var(--color-gold); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pass-badge {
+    margin-left: auto; flex-shrink: 0;
+    font-size: 11px; font-weight: 600;
+    color: var(--color-gold);
+    background: rgba(245,200,66,0.13);
+    border: 0.5px solid rgba(245,200,66,0.28);
+    padding: 4px 10px; border-radius: 6px;
+  }
+
+  .status-bar {
+    display: none; align-items: center; gap: 12px;
+    border-radius: 12px; padding: .75rem 1rem;
+    margin-bottom: .75rem; font-size: 14px;
+  }
+  .status-bar.show { display: flex; }
+  .status-bar.yes-bar {
+    background: var(--color-green-bg);
+    border: 1px solid rgba(46,204,130,0.3);
+    color: var(--color-green);
+  }
+  .status-bar.no-bar {
+    background: var(--color-red-bg);
+    border: 0.5px solid rgba(230,59,46,0.3);
+    color: var(--color-red-val);
+  }
+  .status-bar .s-icon { display: flex; align-items: center; flex-shrink: 0; }
+  .status-bar .s-title { font-weight: 600; }
+  .status-bar .s-time { font-size: 11px; opacity: .7; margin-top: 1px; }
+
+  .sec-label {
+    font-size: 11px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--color-muted);
+    margin-bottom: .75rem;
+  }
+
+  .rsvp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: .75rem; }
+  .rsvp-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 1.1rem .75rem;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, transform .1s, color .15s;
+  }
+  .rsvp-btn:active { transform: scale(.97); }
+
+  .yesbtn { border: 1px solid var(--color-gold); color: #0C0A14; background: var(--color-gold); }
+  .yesbtn .btn-label { color: #0C0A14; }
+  .yesbtn .btn-sub { color: rgba(12,10,20,0.6); }
+  .yesbtn .btn-icon-wrap { color: #0C0A14; }
+  .yesbtn:hover { background: #01a839ef; border-color: #01a839; }
+
+  .nobtn { border: 1px solid var(--color-gold); color: var(--color-gold); background: transparent; }
+  .nobtn .btn-label { color: var(--color-gold); }
+  .nobtn .btn-sub { color: var(--color-muted); }
+  .nobtn .btn-icon-wrap { color: var(--color-gold); }
+  .nobtn:hover { background: var(--color-red-bg); border-color: var(--color-red-val); }
+  .nobtn:hover .btn-label { color: var(--color-red-val); }
+  .nobtn:hover .btn-icon-wrap { color: var(--color-red-val); }
+
+  .rsvp-btn.yes-active { background: var(--color-green-bg) !important; border: 1px solid rgba(46,204,130,0.5) !important; }
+  .rsvp-btn.yes-active .btn-label { color: var(--color-green) !important; }
+  .rsvp-btn.yes-active .btn-icon-wrap { color: var(--color-green) !important; }
+  .rsvp-btn.yes-active .btn-sub { color: rgba(46,204,130,0.7) !important; }
+  .rsvp-btn.no-active { background: var(--color-red-bg) !important; border-color: rgba(230,59,46,0.45) !important; }
+  .rsvp-btn.no-active .btn-label { color: var(--color-red-val) !important; }
+  .rsvp-btn.no-active .btn-icon-wrap { color: var(--color-red-val) !important; }
+
+  .btn-icon-wrap { display: flex; align-items: center; justify-content: center; }
+  .btn-label { font-size: 15px; font-weight: 600; }
+  .btn-sub { font-size: 11px; text-align: center; }
+
+  .loading-state { display: none; text-align: center; padding: .75rem; font-size: 13px; color: var(--color-muted); }
+  .error-box {
+    display: none;
+    background: var(--color-red-bg);
+    border: 0.5px solid rgba(230,59,46,0.3);
+    color: var(--color-red-val);
+    padding: .65rem .9rem;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: .5rem;
+  }
+
+  .meta-grid {
+    background: var(--color-surface2);
+    border-radius: 10px;
+    padding: .75rem;
+    display: flex; flex-direction: column; gap: 6px;
+    margin-top: .75rem;
+  }
+  .meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+  .meta-key { color: var(--color-gold); display: flex; align-items: center; gap: 5px; }
+  .meta-val { font-weight: 500; color: var(--color-body); font-family: monospace; }
+
+  .detail-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: .65rem 0;
+    border-bottom: 0.5px solid var(--color-border);
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-icon {
+    width: 34px; height: 34px; flex-shrink: 0;
+    border-radius: 8px;
+    background: var(--color-surface2);
+    border: 0.5px solid var(--color-border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--color-gold);
+  }
+  .detail-key { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--color-gold); margin-bottom: 2px; }
+  .detail-val { font-size: 13px; font-weight: 500; color: var(--color-body); }
+  .detail-link {
+    font-size: 12px; color: var(--color-purple-lt); text-decoration: none;
+    display: flex; align-items: center; gap: 4px; margin-top: 3px;
+  }
+  .detail-link:hover { text-decoration: underline; }
+
+  .footer {
+    text-align: center; font-size: 11px;
+    color: var(--color-muted); letter-spacing: .5px; margin-top: 2rem;
+  }
+  .footer span { color: var(--color-gold); }
+
+  .icon-16 { width: 16px; height: 16px; stroke-width: 1.75; }
+  .icon-18 { width: 18px; height: 18px; stroke-width: 1.75; }
+  .icon-20 { width: 20px; height: 20px; stroke-width: 1.75; }
+  .icon-22 { width: 22px; height: 22px; stroke-width: 1.75; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="banner">
+    <img src='/banner.jpg' alt="The Booyah Awards 2026">
+    <div class="banner-fade"></div>
+  </div>
+
+  <div class="card">
+    <div class="attendee-row">
+      <div class="avatar" id="avatarEl">–</div>
+      <div style="min-width:0;flex:1;">
+        <div class="attendee-name" id="nameEl">Loading…</div>
+        <div class="attendee-email" id="emailEl">–</div>
+      </div>
+      <span class="pass-badge" id="passEl">–</span>
+    </div>
+  </div>
+
+  <div class="status-bar yes-bar" id="yesBar">
+    <span class="s-icon"><i data-lucide="circle-check" class="icon-20"></i></span>
+    <div>
+      <div class="s-title">You're confirmed!</div>
+      <div class="s-time" id="yesTime">–</div>
+    </div>
+  </div>
+
+  <div class="status-bar no-bar" id="noBar">
+    <span class="s-icon"><i data-lucide="circle-x" class="icon-20"></i></span>
+    <div>
+      <div class="s-title">Marked as not attending</div>
+      <div class="s-time" id="noTime">–</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec-label">Confirm your attendance</div>
+    <div class="rsvp-grid">
+      <button class="rsvp-btn yesbtn" id="yesBtn" onclick="submitRSVP('YES')">
+        <span class="btn-icon-wrap"><i data-lucide="party-popper" class="icon-22"></i></span>
+        <span class="btn-label">Yes, I'm in!</span>
+        <span class="btn-sub">See you on the red carpet</span>
+      </button>
+      <button class="rsvp-btn nobtn" id="noBtn" onclick="submitRSVP('NO')">
+        <span class="btn-icon-wrap"><i data-lucide="circle-slash-2" class="icon-22"></i></span>
+        <span class="btn-label">Can't make it</span>
+        <span class="btn-sub">Let the team know</span>
+      </button>
+    </div>
+    <div class="loading-state" id="loadingEl">Saving your response…</div>
+    <div class="error-box" id="errorBox"></div>
+    <div class="meta-grid">
+      <div class="meta-row">
+        <span class="meta-key"><i data-lucide="ticket" class="icon-16"></i> Ticket ID</span>
+        <span class="meta-val" id="tidEl">–</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key"><i data-lucide="badge-check" class="icon-16"></i> Pass</span>
+        <span class="meta-val" id="passMetaEl">–</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key"><i data-lucide="send" class="icon-16"></i> Channel</span>
+        <span class="meta-val" id="sourceEl">–</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="font-display" style="font-size:22px;letter-spacing:1px;color:var(--color-body);margin-bottom:1rem;">Event Details</div>
+    <div class="detail-row">
+      <div class="detail-icon"><i data-lucide="calendar-days" class="icon-18"></i></div>
+      <div>
+        <div class="detail-key">Date</div>
+        <div class="detail-val">Saturday, 6 June 2026</div>
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon"><i data-lucide="clock-4" class="icon-18"></i></div>
+      <div>
+        <div class="detail-key">Doors open / show</div>
+        <div class="detail-val">Gates 12:30 PM · Show 12:00–6:30 PM IST</div>
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon"><i data-lucide="map-pin" class="icon-18"></i></div>
+      <div>
+        <div class="detail-key">Venue</div>
+        <div class="detail-val">India Expo Centre &amp; Mart, Greater Noida</div>
+        <a class="detail-link" href="https://maps.app.goo.gl/B2doQttFHaH8Q2wQ8" target="_blank">
+          <i data-lucide="navigation" class="icon-16"></i> Open in Google Maps
+        </a>
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon"><i data-lucide="train-front" class="icon-18"></i></div>
+      <div>
+        <div class="detail-key">How to reach</div>
+        <div class="detail-val">Metro to Knowledge Park II / Jaypee Greens · Free shuttles at exit</div>
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon"><i data-lucide="shield-alert" class="icon-18"></i></div>
+      <div>
+        <div class="detail-key">Age restriction</div>
+        <div class="detail-val">16+ years · Re-entry allowed</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer"><span>The Booyah Awards 2026</span></div>
+
+</div>
+
+<script>
+  // ─────────────────────────────────────────────────────────────
+  // Fetch Google Apps Script URL from backend config
+  // ─────────────────────────────────────────────────────────────
+  let SCRIPT_URL = null;
+
+  lucide.createIcons();
+
+  const p     = new URLSearchParams(window.location.search);
+  const tid   = p.get('tid')   || 'TCK-DEMO';
+  const name  = decodeURIComponent(p.get('name')  || 'Attendee');
+  const email = decodeURIComponent(p.get('email') || '');
+  const pass  = decodeURIComponent(p.get('pass')  || 'Booyah Pass');
+  const src   = p.get('src')   || 'direct';
+
+  document.getElementById('nameEl').textContent     = name;
+  document.getElementById('emailEl').textContent    = email || '—';
+  document.getElementById('passEl').textContent     = pass;
+  document.getElementById('passMetaEl').textContent = pass;
+  document.getElementById('tidEl').textContent      = tid;
+  document.getElementById('avatarEl').textContent   =
+    name.trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  document.getElementById('sourceEl').textContent   =
+    src === 'wa' ? 'WhatsApp' : src === 'email' ? 'Email' : 'Direct';
+
+  const preConfirm = p.get('confirm');
+
+  // ── FETCH CONFIG FROM SERVER ─────────────────────────────────
+  async function initConfig() {
+    try {
+      const r = await fetch('/api/config');
+      const cfg = await r.json();
+      SCRIPT_URL = cfg.GOOGLE_SCRIPT_URL;
+      if (!SCRIPT_URL) throw new Error('No GOOGLE_SCRIPT_URL in config');
+      console.log('✅ Config loaded');
+      return true;
+    } catch(e) {
+      console.error('❌ Config load failed:', e.message);
+      document.getElementById('errorBox').textContent = 'Failed to load configuration. Please refresh.';
+      document.getElementById('errorBox').style.display = 'block';
+      return false;
+    }
+  }
+
+  // ── LOAD EXISTING STATUS ON PAGE OPEN ────────────────────────
+  async function loadStatus() {
+    try {
+      const url = `${SCRIPT_URL}?action=get&tid=${encodeURIComponent(tid)}`;
+      const r   = await fetch(url);
+      const d   = await r.json();
+      if (d.status === 'ok') showStatus(d.current);
+    } catch(e) {}
+  }
+
+  function showStatus(c) {
+    if (!c) return;
+    document.getElementById('yesBar').classList.toggle('show', c.response === 'YES');
+    document.getElementById('noBar').classList.toggle('show',  c.response === 'NO');
+    document.getElementById('yesTime').textContent = 'Last updated: ' + c.time;
+    document.getElementById('noTime').textContent  = 'Last updated: ' + c.time;
+    document.getElementById('yesBtn').classList.toggle('yes-active', c.response === 'YES');
+    document.getElementById('noBtn').classList.toggle('no-active',   c.response === 'NO');
+  }
+
+  // ── SUBMIT RSVP ──────────────────────────────────────────────
+  let busy = false;
+  async function submitRSVP(resp) {
+    if (busy) return;
+    busy = true;
+    const yb = document.getElementById('yesBtn');
+    const nb = document.getElementById('noBtn');
+    yb.disabled = nb.disabled = true;
+    document.getElementById('loadingEl').style.display = 'block';
+    document.getElementById('errorBox').style.display  = 'none';
+    document.getElementById('yesBar').classList.remove('show');
+    document.getElementById('noBar').classList.remove('show');
+    yb.classList.remove('yes-active');
+    nb.classList.remove('no-active');
+
+    try {
+      const r = await fetch(SCRIPT_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action:   'rsvp',
+          tid, name, email, pass,
+          response: resp,
+          source:   src,
+          ua:       navigator.userAgent,
+          ts:       new Date().toISOString()
+        })
+      });
+      const d = await r.json();
+      document.getElementById('loadingEl').style.display = 'none';
+      if (d.status === 'ok') {
+        showStatus({ response: resp, time: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) });
+      } else {
+        const eb = document.getElementById('errorBox');
+        eb.textContent = d.message || 'Something went wrong.';
+        eb.style.display = 'block';
+      }
+    } catch(e) {
+      document.getElementById('loadingEl').style.display = 'none';
+      const eb = document.getElementById('errorBox');
+      eb.textContent = 'Network error. Please try again.';
+      eb.style.display = 'block';
+    }
+    yb.disabled = nb.disabled = busy = false;
+  }
+
+  // ── INITIALIZE ON PAGE LOAD ──────────────────────────────────
+  async function init() {
+    const ok = await initConfig();
+    if (ok) {
+      await loadStatus();
+      if (preConfirm === 'YES' || preConfirm === 'NO') {
+        setTimeout(() => submitRSVP(preConfirm), 600);
+      }
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

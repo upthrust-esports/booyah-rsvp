@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: booyah-rsvp
+    env: node
+    region: singapore   # closest to India
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      # Set these in Render dashboard → Environment tab (don't commit secrets)
+      - key: RSVP_PAGE_URL
+        sync: false
+      - key: GOOGLE_SCRIPT_URL
+        sync: false
+      - key: WA_PHONE_NUMBER_ID
+        sync: false
+      - key: WA_ACCESS_TOKEN
+        sync: false
+      - key: WA_TEMPLATE
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM_NAME
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: EMAIL_SUBJECT
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

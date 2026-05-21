@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · Booyah Awards RSVP</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  html, body { height: 100%; }
+  body { background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(123,63,190,0.14) 0%, transparent 55%), var(--color-bg); }
+  .nav-active { color: var(--color-gold) !important; border-left-color: var(--color-gold) !important; background: rgba(245,200,66,0.06) !important; }
+  .badge-rsvp    { background:rgba(123,63,190,0.15); color:var(--color-purple-lt); border:1px solid rgba(123,63,190,0.3); }
+  .badge-premium { background:rgba(245,200,66,0.1);  color:var(--color-gold);      border:1px solid rgba(245,200,66,0.25); }
+  .badge-general { background:var(--color-surface2); color:var(--color-muted);     border:1px solid var(--color-border); }
+  .badge-paid    { background:var(--color-green-bg); color:var(--color-green);     border:1px solid rgba(46,204,130,0.28); }
+  .badge-sent    { background:var(--color-green-bg); color:var(--color-green);     border:1px solid rgba(46,204,130,0.28); }
+  .badge-pending { background:var(--color-amber-bg); color:var(--color-amber);     border:1px solid rgba(245,158,11,0.28); }
+  .badge-skipped { background:var(--color-surface2); color:var(--color-muted2);    border:1px solid var(--color-border); }
+  .badge-failed  { background:var(--color-red-bg);   color:var(--color-red-val);   border:1px solid rgba(230,59,46,0.28); }
+  .badge { display:inline-block; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:600; letter-spacing:.5px; }
+  .ch-on  { border-color:var(--color-purple-lt) !important; background:rgba(123,63,190,0.12) !important; color:var(--color-purple-lt) !important; }
+  .upload-zone { border:1.5px dashed rgba(255,255,255,0.14); transition:all .2s; }
+  .upload-zone:hover, .upload-zone.drag  { border-color:var(--color-purple-lt); background:rgba(123,63,190,0.1); }
+  tr:hover td { background:rgba(255,255,255,0.02); }
+  .progress-wrap { background:var(--color-surface2); border-radius:100px; height:8px; overflow:hidden; }
+  input[type=range] { accent-color: var(--color-purple-lt); }
+  ::-webkit-scrollbar{width:4px;height:4px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.14);border-radius:10px}
+</style>
+</head>
+<body class="h-full">
+
+<div class="flex h-full min-h-screen">
+
+  <!-- ── Sidebar ── -->
+  <aside class="w-[220px] shrink-0 bg-[--color-surface] border-r border-[--color-border] flex flex-col">
+    <div class="px-4 py-5 border-b border-[--color-border]">
+      <div class="font-display text-[18px] text-[--color-gold] tracking-wide leading-none">⚡ Booyah Awards</div>
+      <div class="text-[11px] text-[--color-muted] mt-1">RSVP Admin Panel · 2026</div>
+    </div>
+    <nav class="py-2 flex-1">
+      <div class="nav-item nav-active flex items-center gap-2.5 px-4 py-2.5 text-[13px] font-medium text-[--color-muted] cursor-pointer border-l-2 border-transparent transition-all hover:bg-[--color-surface2] hover:text-[--color-body]" onclick="showPage('dashboard')" id="nav-dashboard"><span>📊</span> Dashboard</div>
+      <div class="nav-item flex items-center gap-2.5 px-4 py-2.5 text-[13px] font-medium text-[--color-muted] cursor-pointer border-l-2 border-transparent transition-all hover:bg-[--color-surface2] hover:text-[--color-body]" onclick="showPage('import')"    id="nav-import">   <span>📥</span> Import CSV</div>
+      <div class="nav-item flex items-center gap-2.5 px-4 py-2.5 text-[13px] font-medium text-[--color-muted] cursor-pointer border-l-2 border-transparent transition-all hover:bg-[--color-surface2] hover:text-[--color-body]" onclick="showPage('contacts')"  id="nav-contacts"> <span>👥</span> Contacts</div>
+      <div class="nav-item flex items-center gap-2.5 px-4 py-2.5 text-[13px] font-medium text-[--color-muted] cursor-pointer border-l-2 border-transparent transition-all hover:bg-[--color-surface2] hover:text-[--color-body]" onclick="showPage('send')"     id="nav-send">    <span>📤</span> Send RSVP</div>
+      <div class="nav-item flex items-center gap-2.5 px-4 py-2.5 text-[13px] font-medium text-[--color-muted] cursor-pointer border-l-2 border-transparent transition-all hover:bg-[--color-surface2] hover:text-[--color-body]" onclick="showPage('log')"      id="nav-log">     <span>📋</span> Send Log</div>
+      <div class="nav-item flex items-center gap-2.5 px-4 py-2.5 text-[13px] font-medium text-[--color-muted] cursor-pointer border-l-2 border-transparent transition-all hover:bg-[--color-surface2] hover:text-[--color-body]" onclick="showPage('config')"   id="nav-config">  <span>⚙️</span> Settings</div>
+    </nav>
+    <div class="px-4 py-3 border-t border-[--color-border] text-[11px] text-[--color-muted2] leading-relaxed"><br>Upthrust Esports · 2026</div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="flex-1 overflow-y-auto p-7 pb-16">
+
+    <!-- DASHBOARD -->
+    <div class="page" id="page-dashboard">
+      <div class="font-display text-[26px] tracking-wide mb-0.5">Dashboard</div>
+      <div class="text-[13px] text-[--color-muted] mb-6">Overview of RSVP campaign status</div>
+
+      <div class="grid grid-cols-4 gap-3 mb-5">
+        <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-4"><div class="text-[11px] uppercase tracking-[1px] text-[--color-muted] mb-1.5">Total Contacts</div><div class="text-[26px] font-bold" id="stat-total">—</div><div class="text-[11px] text-[--color-muted] mt-1">unique transactions</div></div>
+        <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-4"><div class="text-[11px] uppercase tracking-[1px] text-[--color-muted] mb-1.5">RSVP Sent</div><div class="text-[26px] font-bold text-[--color-green]" id="stat-sent">0</div><div class="text-[11px] text-[--color-muted] mt-1">via WA + email</div></div>
+        <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-4"><div class="text-[11px] uppercase tracking-[1px] text-[--color-muted] mb-1.5">Confirmed Yes</div><div class="text-[26px] font-bold text-[--color-gold]" id="stat-yes">—</div><div class="text-[11px] text-[--color-muted] mt-1">from sheet</div></div>
+        <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-4"><div class="text-[11px] uppercase tracking-[1px] text-[--color-muted] mb-1.5">Pending Send</div><div class="text-[26px] font-bold text-[--color-red-val]" id="stat-pending">—</div><div class="text-[11px] text-[--color-muted] mt-1">not sent yet</div></div>
+      </div>
+
+      <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-5 mb-4">
+        <div class="text-[13px] font-semibold mb-3">📊 Ticket Type Breakdown</div>
+        <div id="breakdown-body"><div class="py-8 text-center text-[--color-muted2] text-[13px]">Import a CSV to see stats</div></div>
+      </div>
+      <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-5">
+        <div class="text-[13px] font-semibold mb-3">📤 Recent Activity</div>
+        <div class="space-y-1.5 max-h-52 overflow-y-auto" id="dashboard-log"><div class="text-[12px] text-[--color-muted2] py-2">No activity yet</div></div>
+      </div>
+    </div>
+
+    <!-- IMPORT -->
+    <div class="page hidden" id="page-import">
+      <div class="font-display text-[26px] tracking-wide mb-0.5">Import CSV</div>
+      <div class="text-[13px] text-[--color-muted] mb-6">Upload the District export. One RSVP per Transaction ID — multi-ticket rows collapsed automatically.</div>
+
+      <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-5 mb-4">
+        <div class="flex items-start gap-2.5 bg-[rgba(59,130,246,0.1)] border border-[rgba(59,130,246,0.28)] rounded-xl p-3 mb-4 text-[12px] text-[#93C5FD]">
+          <span>ℹ️</span>
+          <span>Expected columns: <b>Transaction ID, Shortcode, Name, Email, Phone, Ticket Name, Ticket Group</b>. Extra columns ignored.</span>
+        </div>
+        <div class="upload-zone rounded-xl p-9 text-center cursor-pointer" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <div class="text-3xl mb-2.5">📂</div>
+          <div class="text-[15px] font-semibold text-[--color-body] mb-1">Drop District CSV here or click to browse</div>
+          <div class="text-[12px] text-[--color-muted]">Accepts <span class="text-[--color-purple-lt]">.csv</span> files · max 50MB</div>
+        </div>
+        <input type="file" id="fileInput" accept=".csv" class="hidden" onchange="handleFile(this.files[0])">
+      </div>
+
+      <div id="import-preview" class="hidden">
+        <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-5">
+          <div class="text-[13px] font-semibold mb-3">👁️ Preview <span id="preview-count" class="text-[--color-muted] font-normal text-[12px]"></span></div>
+          <div class="flex items-start gap-2.5 bg-[--color-amber-bg] border border-[rgba(245,158,11,0.28)] rounded-xl p-3 mb-4 text-[12px] text-[#FCD34D]" id="dedup-info-box">
+            <span>⚠️</span><span id="dedup-info">–</span>
+          </div>
+          <div class="overflow-x-auto rounded-lg border border-[--color-border]">
+            <table class="w-full text-[12px] border-collapse">
+              <thead><tr class="bg-[--color-surface2]"><th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border] whitespace-nowrap">#</th><th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border] whitespace-nowrap">Name</th><th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border] whitespace-nowrap">Email</th><th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border] whitespace-nowrap">Phone</th><th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border] whitespace-nowrap">Ticket</th><th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border] whitespace-nowrap">Shortcode</th></tr></thead>
+              <tbody id="preview-tbody"></tbody>
+            </table>
+          </div>
+          <div class="flex items-center gap-3 mt-4">
+            <button class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[--color-gold] text-[#0C0A14] text-[13px] font-semibold cursor-pointer hover:opacity-90 active:scale-95 transition-all" onclick="confirmImport()">✅ Import <span id="import-count"></span> Contacts</button>
+            <button class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-[--color-border2] text-[--color-muted] text-[13px] font-medium cursor-pointer hover:bg-[--color-surface2] hover:text-[--color-body] transition-all" onclick="clearImport()">✕ Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div class="page hidden" id="page-contacts">
+      <div class="font-display text-[26px] tracking-wide mb-0.5">Contacts</div>
+      <div class="text-[13px] text-[--color-muted] mb-6" id="contacts-sub">–</div>
+
+      <div class="flex gap-2.5 flex-wrap mb-3">
+        <input class="flex-1 min-w-[180px] bg-[--color-surface2] border border-[--color-border2] rounded-lg px-3 py-2 text-[13px] text-[--color-body] outline-none focus:border-[--color-purple-lt] placeholder:text-[--color-muted2]" id="search-input" placeholder="Search name, email, phone…" oninput="renderContacts()">
+        <select class="bg-[--color-surface2] border border-[--color-border2] rounded-lg px-3 py-2 text-[13px] text-[--color-body] outline-none cursor-pointer focus:border-[--color-purple-lt]" id="filter-ticket" onchange="renderContacts()">
+          <option value="">All Ticket Types</option>
+          <option value="RSVP">RSVP</option>
+          <option value="General Access">General Access</option>
+          <option value="Premium Access">Premium Access</option>
+          <option value="Paid Tickets">Paid Tickets</option>
+        </select>
+        <select class="bg-[--color-surface2] border border-[--color-border2] rounded-lg px-3 py-2 text-[13px] text-[--color-body] outline-none cursor-pointer focus:border-[--color-purple-lt]" id="filter-sent" onchange="renderContacts()">
+          <option value="">All Status</option>
+          <option value="sent">Sent</option>
+          <option value="pending">Pending</option>
+        </select>
+        <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[--color-border2] text-[--color-muted] text-[13px] font-medium cursor-pointer hover:bg-[--color-surface2] hover:text-[--color-body] transition-all shrink-0" onclick="exportFiltered()">⬇ Export</button>
+      </div>
+
+      <div class="bg-[--color-surface] border border-[--color-border] rounded-xl overflow-hidden mb-3">
+        <div class="overflow-x-auto">
+          <table class="w-full text-[12px] border-collapse">
+            <thead><tr class="bg-[--color-surface2]">
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">#</th>
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">Name</th>
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">Email</th>
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">Phone</th>
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">Ticket</th>
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">Shortcode</th>
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">WhatsApp</th>
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">Email</th>
+            </tr></thead>
+            <tbody id="contacts-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 text-[12px] text-[--color-muted]">
+        <button class="px-2.5 py-1 rounded-md border border-[--color-border2] bg-[--color-surface2] text-[--color-muted] text-[12px] cursor-pointer hover:text-[--color-body] disabled:opacity-40 disabled:cursor-not-allowed" id="pg-prev" onclick="changePage(-1)">← Prev</button>
+        <span id="pg-info">Page 1 of 1</span>
+        <button class="px-2.5 py-1 rounded-md border border-[--color-border2] bg-[--color-surface2] text-[--color-muted] text-[12px] cursor-pointer hover:text-[--color-body] disabled:opacity-40 disabled:cursor-not-allowed" id="pg-next" onclick="changePage(1)">Next →</button>
+        <span class="ml-auto" id="pg-count"></span>
+      </div>
+    </div>
+
+    <!-- SEND -->
+    <div class="page hidden" id="page-send">
+      <div class="font-display text-[26px] tracking-wide mb-0.5">Send RSVP</div>
+      <div class="text-[13px] text-[--color-muted] mb-6">Select channels and send. Already-sent contacts are automatically skipped.</div>
+
+      <div class="grid grid-cols-3 gap-3 mb-5">
+        <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-4"><div class="text-[11px] uppercase tracking-[1px] text-[--color-muted] mb-1.5">To Send</div><div class="text-[26px] font-bold" id="send-count">—</div><div class="text-[11px] text-[--color-muted] mt-1">not sent on any channel</div></div>
+        <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-4"><div class="text-[11px] uppercase tracking-[1px] text-[--color-muted] mb-1.5">Already Sent</div><div class="text-[26px] font-bold text-[--color-green]" id="already-sent">0</div><div class="text-[11px] text-[--color-muted] mt-1">will be skipped</div></div>
+        <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-4"><div class="text-[11px] uppercase tracking-[1px] text-[--color-muted] mb-1.5">Will Send</div><div class="text-[26px] font-bold text-[--color-gold]" id="will-send">—</div><div class="text-[11px] text-[--color-muted] mt-1">on selected channels</div></div>
+      </div>
+
+      <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-5 mb-4">
+        <div class="text-[13px] font-semibold mb-4">📡 Select Channels</div>
+        <div class="flex gap-2.5 mb-5">
+          <div id="ch-wa" class="ch-btn ch-on flex items-center gap-2 px-3.5 py-2 rounded-lg border border-[--color-border2] bg-[--color-surface] text-[12px] font-semibold cursor-pointer transition-all" onclick="toggleChannel('wa')">
+            <span>📱</span><span class="w-1.5 h-1.5 rounded-full bg-current"></span> WhatsApp
+          </div>
+          <div id="ch-email" class="ch-btn ch-on flex items-center gap-2 px-3.5 py-2 rounded-lg border border-[--color-border2] bg-[--color-surface] text-[12px] font-semibold cursor-pointer transition-all" onclick="toggleChannel('email')">
+            <span>📧</span><span class="w-1.5 h-1.5 rounded-full bg-current"></span> Email
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-[11px] text-[--color-muted] uppercase tracking-[.8px] shrink-0">Batch rate</span>
+          <input type="range" min="1" max="20" value="5" id="batch-size" oninput="document.getElementById('batch-label').textContent=this.value" class="flex-1 max-w-[180px]">
+          <span id="batch-label" class="text-[13px] font-medium w-4">5</span>
+          <span class="text-[12px] text-[--color-muted]">msgs/sec</span>
+        </div>
+
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <button class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[--color-gold] text-[#0C0A14] text-[13px] font-semibold cursor-pointer hover:opacity-90 active:scale-95 transition-all" id="send-btn" onclick="startSend()">🚀 Start Sending</button>
+          <button class="hidden flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[--color-red-bg] border border-[rgba(230,59,46,0.28)] text-[--color-red-val] text-[13px] font-semibold cursor-pointer hover:opacity-90 active:scale-95 transition-all" id="stop-btn" onclick="stopSend()">⏹ Stop</button>
+          <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[--color-border2] text-[--color-muted] text-[13px] font-medium cursor-pointer hover:bg-[--color-surface2] hover:text-[--color-body] transition-all" onclick="loadSentStateFromSheet()">🔄 Sync Sheet</button>
+          <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[--color-border2] text-[--color-muted] text-[13px] font-medium cursor-pointer hover:bg-[--color-surface2] hover:text-[--color-body] transition-all" onclick="showPage('log')">📋 View Log</button>
+        </div>
+      </div>
+
+      <div class="hidden bg-[--color-surface] border border-[--color-border] rounded-xl p-5" id="send-progress-card">
+        <div class="text-[13px] font-semibold mb-3">📤 Sending Progress</div>
+        <div class="flex justify-between text-[12px] text-[--color-muted] mb-1.5">
+          <span id="prog-label">0 / 0 sent</span><span id="prog-pct">0%</span>
+        </div>
+        <div class="progress-wrap mb-3"><div class="progress-bar h-full rounded-full" id="prog-bar" style="width:0%"></div></div>
+        <div class="flex gap-4 text-[12px] mb-3">
+          <span class="text-[--color-green]">✅ <span id="prog-ok">0</span> sent</span>
+          <span class="text-[--color-muted2]">⏭ <span id="prog-skip">0</span> skipped</span>
+          <span class="text-[--color-red-val]">❌ <span id="prog-fail">0</span> failed</span>
+        </div>
+        <div class="space-y-1 max-h-44 overflow-y-auto" id="send-log-live"></div>
+      </div>
+    </div>
+
+    <!-- LOG -->
+    <div class="page hidden" id="page-log">
+      <div class="font-display text-[26px] tracking-wide mb-0.5">Send Log</div>
+      <div class="text-[13px] text-[--color-muted] mb-6">Full audit trail of all RSVP sends</div>
+
+      <div class="flex gap-2.5 flex-wrap items-center mb-3">
+        <input class="bg-[--color-surface2] border border-[--color-border2] rounded-lg px-3 py-2 text-[13px] text-[--color-body] outline-none focus:border-[--color-purple-lt] placeholder:text-[--color-muted2] w-60" id="log-search" placeholder="Search name or email…" oninput="renderLog()">
+        <select class="bg-[--color-surface2] border border-[--color-border2] rounded-lg px-3 py-2 text-[13px] text-[--color-body] outline-none cursor-pointer focus:border-[--color-purple-lt]" id="log-filter-status" onchange="renderLog()">
+          <option value="">All Status</option><option value="sent">Sent</option><option value="skipped">Skipped</option><option value="failed">Failed</option>
+        </select>
+        <select class="bg-[--color-surface2] border border-[--color-border2] rounded-lg px-3 py-2 text-[13px] text-[--color-body] outline-none cursor-pointer focus:border-[--color-purple-lt]" id="log-filter-ch" onchange="renderLog()">
+          <option value="">All Channels</option><option value="wa">WhatsApp</option><option value="email">Email</option>
+        </select>
+        <button class="ml-auto flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[--color-border2] text-[--color-muted] text-[13px] font-medium cursor-pointer hover:bg-[--color-surface2] hover:text-[--color-body] transition-all" onclick="clearLog()">🗑 Clear Log</button>
+      </div>
+
+      <div class="bg-[--color-surface] border border-[--color-border] rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-[12px] border-collapse">
+            <thead><tr class="bg-[--color-surface2]">
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border] whitespace-nowrap">Time</th>
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">Name</th>
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">Email</th>
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">Channel</th>
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">Status</th>
+              <th class="px-3 py-2.5 text-left text-[11px] uppercase tracking-[.8px] text-[--color-muted] font-medium border-b border-[--color-border]">Note</th>
+            </tr></thead>
+            <tbody id="log-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="log-empty" class="hidden text-center py-12 text-[--color-muted]">
+        <div class="text-4xl mb-3">📋</div>
+        <div class="text-[15px] font-semibold text-[--color-muted] mb-1">No log entries yet</div>
+        <div class="text-[12px] text-[--color-muted2]">Logs appear here after sending</div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page hidden" id="page-config">
+      <div class="font-display text-[26px] tracking-wide mb-0.5">Settings</div>
+      <div class="text-[13px] text-[--color-muted] mb-6">All secrets live in server .env — configure once, never touch again</div>
+
+      <div class="flex items-start gap-2.5 bg-[rgba(59,130,246,0.1)] border border-[rgba(59,130,246,0.28)] rounded-xl p-3 mb-4 text-[12px] text-[#93C5FD]">
+        <span>ℹ️</span>
+        <span>WA token, SMTP password, Google Script URL — all in <code class="text-[#93C5FD]">.env</code> (local) or Render → Environment tab (production). Never in the browser.</span>
+      </div>
+
+      <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-5 mb-4">
+        <div class="text-[13px] font-semibold mb-4">🔐 Admin Access</div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[11px] uppercase tracking-[.8px] text-[--color-muted] mb-1.5">Admin Password</label>
+            <input type="password" id="cfg-admin-password" placeholder="Same as ADMIN_PASSWORD in .env" class="w-full bg-[--color-surface2] border border-[--color-border2] rounded-lg px-3 py-2 text-[13px] text-[--color-body] outline-none focus:border-[--color-purple-lt]">
+            <div class="text-[11px] text-[--color-muted] mt-1">Sent as x-admin-token header on every API call</div>
+          </div>
+          <div>
+            <label class="block text-[11px] uppercase tracking-[.8px] text-[--color-muted] mb-1.5">RSVP Page URL (display)</label>
+            <input type="url" id="cfg-rsvp-url" placeholder="https://your-app.onrender.com/rsvp.html" class="w-full bg-[--color-surface2] border border-[--color-border2] rounded-lg px-3 py-2 text-[13px] text-[--color-body] outline-none focus:border-[--color-purple-lt]">
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-5 mb-4">
+        <div class="text-[13px] font-semibold mb-3">⚙️ Server Environment Variables</div>
+        <div class="text-[13px] text-[--color-muted] leading-8">
+          <code class="text-[--color-gold]">GOOGLE_SCRIPT_URL</code> — Apps Script web app URL<br>
+          <code class="text-[--color-gold]">WA_PHONE_NUMBER_ID</code> — Meta WhatsApp Phone Number ID<br>
+          <code class="text-[--color-gold]">WA_ACCESS_TOKEN</code> — Meta permanent access token<br>
+          <code class="text-[--color-gold]">WA_TEMPLATE</code> — message text with {name} and {link}<br>
+          <code class="text-[--color-gold]">SMTP_HOST / SMTP_USER / SMTP_PASS</code> — email config<br>
+          <code class="text-[--color-gold]">RSVP_PAGE_URL</code> — your Render URL (used to build RSVP links)<br>
+          <code class="text-[--color-gold]">ADMIN_PASSWORD</code> — must match password above
+        </div>
+      </div>
+
+      <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-5 mb-4">
+        <div class="text-[13px] font-semibold mb-3">🩺 Server Health</div>
+        <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[--color-border2] text-[--color-muted] text-[13px] font-medium cursor-pointer hover:bg-[--color-surface2] hover:text-[--color-body] transition-all" onclick="checkHealth()">Check server status</button>
+        <div id="health-result" class="mt-3 text-[13px] text-[--color-muted] space-y-1.5"></div>
+      </div>
+
+      <button class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[--color-gold] text-[#0C0A14] text-[13px] font-semibold cursor-pointer hover:opacity-90 active:scale-95 transition-all" onclick="saveConfig()">💾 Save Settings</button>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 right-6 px-4 py-3 rounded-xl text-[13px] font-medium z-50 opacity-0 translate-y-2 pointer-events-none transition-all duration-200 max-w-xs"></div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────
+let contacts   = [];
+let sendLog    = [];
+let sendActive = false;
+let stopFlag   = false;
+let currentPage = 1;
+const PAGE_SIZE = 50;
+let chWA    = true;
+let chEmail = true;
+let cfg = { adminPassword: '', rsvpUrl: '' };
+
+// ── Navigation ────────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+  document.getElementById('page-' + id).classList.remove('hidden');
+  document.getElementById('nav-' + id).classList.add('nav-active');
+  if (id === 'contacts')  renderContacts();
+  if (id === 'log')       renderLog();
+  if (id === 'dashboard') updateDashboard();
+  if (id === 'send')      updateSendPage();
+}
+
+// ── CSV Import ────────────────────────────────────────────────────
+let pendingImport = [];
+
+function handleFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => parseCSV(e.target.result);
+  reader.readAsText(file, 'utf-8');
+}
+
+const dz = document.getElementById('uploadZone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+
+async function parseCSV(text) {
+  toast('Parsing CSV…', 'info');
+  try {
+    const formData = new FormData();
+    const blob = new Blob([text], { type: 'text/csv' });
+    formData.append('csv', blob, 'upload.csv');
+    const res  = await fetch('/api/admin/parse-csv', {
+      method: 'POST', headers: { 'x-admin-token': cfg.adminPassword }, body: formData
+    });
+    const data = await res.json();
+    if (data.status !== 'ok') return toast(data.message || 'Parse failed', 'error');
+    pendingImport = data.contacts;
+    showPreview(pendingImport, data.rawCount, data.duped);
+  } catch(e) { toast('Server error: ' + e.message, 'error'); }
+}
+
+function showPreview(data, rawCount, duped) {
+  document.getElementById('import-preview').classList.remove('hidden');
+  document.getElementById('preview-count').textContent = `(${data.length} unique)`;
+  document.getElementById('import-count').textContent  = data.length;
+  document.getElementById('dedup-info').textContent    = `${rawCount} raw rows → ${data.length} unique transactions (${duped} duplicate/multi-seat rows collapsed).`;
+  const tbody = document.getElementById('preview-tbody');
+  tbody.innerHTML = data.slice(0, 100).map((r, i) => `
+    <tr>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] text-[--color-muted2]">${i+1}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] font-medium">${r.name || '—'}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] text-[--color-purple-lt]">${r.email || '—'}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] font-mono text-[--color-muted]">${r.phone || '—'}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)]">${ticketBadge(r.ticketName)}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] font-mono text-[--color-muted]">${r.shortcode}</td>
+    </tr>`).join('') + (data.length > 100 ? `<tr><td colspan="6" class="px-3 py-3 text-center text-[--color-muted2]">… and ${data.length-100} more</td></tr>` : '');
+}
+
+async function confirmImport() {
+  if (!pendingImport.length) return;
+  const existing = new Map(contacts.map(c => [c.txnId, c]));
+  const merged   = pendingImport.map(r => { const ex = existing.get(r.txnId); return ex ? {...r, waSent:ex.waSent, emailSent:ex.emailSent} : r; });
+  const newIds   = new Set(pendingImport.map(r => r.txnId));
+  existing.forEach((c, id) => { if (!newIds.has(id)) merged.push(c); });
+  contacts = merged;
+  pendingImport = [];
+  updateDashboard();
+  document.getElementById('import-preview').classList.add('hidden');
+  toast(`✅ Imported ${contacts.length} contacts`, 'success');
+  await loadSentStateFromSheet();
+  renderContacts();
+  showPage('contacts');
+}
+
+function clearImport() {
+  pendingImport = [];
+  document.getElementById('import-preview').classList.add('hidden');
+  document.getElementById('fileInput').value = '';
+}
+
+// ── Contacts ──────────────────────────────────────────────────────
+function getFiltered() {
+  const q  = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const tt = document.getElementById('filter-ticket')?.value || '';
+  const st = document.getElementById('filter-sent')?.value   || '';
+  return contacts.filter(c => {
+    if (q  && !`${c.name} ${c.email} ${c.phone}`.toLowerCase().includes(q)) return false;
+    if (tt && c.ticketName !== tt) return false;
+    if (st === 'sent'    && !(c.waSent || c.emailSent)) return false;
+    if (st === 'pending' &&  (c.waSent && c.emailSent)) return false;
+    return true;
+  });
+}
+
+function renderContacts() {
+  const filtered = getFiltered();
+  const pages    = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  currentPage    = Math.min(currentPage, pages);
+  document.getElementById('contacts-sub').textContent = `${contacts.length} total · ${contacts.filter(c=>c.waSent||c.emailSent).length} sent`;
+  document.getElementById('pg-info').textContent  = `Page ${currentPage} of ${pages}`;
+  document.getElementById('pg-count').textContent = `${filtered.length} contacts`;
+  document.getElementById('pg-prev').disabled = currentPage <= 1;
+  document.getElementById('pg-next').disabled = currentPage >= pages;
+
+  const slice = filtered.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+  const tbody = document.getElementById('contacts-tbody');
+
+  if (!contacts.length) {
+    tbody.innerHTML = `<tr><td colspan="8" class="px-3 py-10 text-center text-[--color-muted2]">Import a CSV first</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = slice.map((c, i) => `
+    <tr>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] text-[--color-muted2]">${(currentPage-1)*PAGE_SIZE+i+1}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] font-medium">${c.name||'—'}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] text-[--color-purple-lt] text-[11px]">${c.email||'—'}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] font-mono text-[--color-muted]">${c.phone||'—'}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)]">${ticketBadge(c.ticketName)}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] font-mono text-[--color-muted]">${c.shortcode}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)]">${c.waSent    ? '<span class="badge badge-sent">✓ Sent</span>' : '<span class="badge badge-pending">Pending</span>'}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)]">${c.emailSent ? '<span class="badge badge-sent">✓ Sent</span>' : '<span class="badge badge-pending">Pending</span>'}</td>
+    </tr>`).join('');
+}
+
+function changePage(dir) {
+  const pages = Math.max(1, Math.ceil(getFiltered().length / PAGE_SIZE));
+  currentPage = Math.max(1, Math.min(pages, currentPage + dir));
+  renderContacts();
+}
+
+function exportFiltered() {
+  const data = getFiltered();
+  const rows = [['Name','Email','Phone','TicketName','Shortcode','TxnID','WASent','EmailSent']];
+  data.forEach(c => rows.push([c.name,c.email,c.phone,c.ticketName,c.shortcode,c.txnId,c.waSent?'Yes':'No',c.emailSent?'Yes':'No']));
+  const csv  = rows.map(r => r.map(v => `"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv],{type:'text/csv'})), download: 'booyah_contacts.csv' });
+  a.click();
+  toast(`Exported ${data.length} contacts`, 'info');
+}
+
+// ── Send ──────────────────────────────────────────────────────────
+function updateSendPage() {
+  const pending = contacts.filter(c => !c.waSent && !c.emailSent);
+  document.getElementById('send-count').textContent   = pending.length;
+  document.getElementById('already-sent').textContent = contacts.filter(c=>c.waSent||c.emailSent).length;
+  updateWillSend();
+}
+
+function updateWillSend() {
+  const n = contacts.filter(c => (chWA && !c.waSent) || (chEmail && !c.emailSent)).length;
+  document.getElementById('will-send').textContent = n;
+}
+
+function toggleChannel(ch) {
+  if (ch === 'wa')    chWA    = !chWA;
+  else                chEmail = !chEmail;
+  document.getElementById('ch-' + ch).classList.toggle('ch-on', ch === 'wa' ? chWA : chEmail);
+  updateWillSend();
+}
+
+async function startSend() {
+  if (!contacts.length) return toast('No contacts loaded', 'error');
+  if (!chWA && !chEmail) return toast('Select at least one channel', 'error');
+  stopFlag = false; sendActive = true;
+  document.getElementById('send-btn').classList.add('hidden');
+  document.getElementById('stop-btn').classList.remove('hidden');
+  document.getElementById('send-progress-card').classList.remove('hidden');
+
+  const queue = [];
+  contacts.forEach(c => {
+    if (chWA    && !c.waSent    && c.phone) queue.push({contact:c, ch:'wa'});
+    if (chEmail && !c.emailSent && c.email) queue.push({contact:c, ch:'email'});
+  });
+
+  let ok = 0, skip = 0, fail = 0;
+  const total = queue.length;
+  const batchSize = parseInt(document.getElementById('batch-size').value) || 5;
+  document.getElementById('send-log-live').innerHTML = '';
+
+  for (let i = 0; i < total; i++) {
+    if (stopFlag) break;
+    const {contact, ch} = queue[i];
+    const result = await simulateSend(contact, ch);
+    if (result.status === 'sent')   { ok++;   if (ch==='wa') contact.waSent=true; else contact.emailSent=true; }
+    else if (result.status === 'skip') skip++;
+    else fail++;
+    addLiveLog(contact.name, contact.email, ch, result.status, result.note);
+    const pct = Math.round(((i+1)/total)*100);
+    document.getElementById('prog-label').textContent = `${i+1} / ${total}`;
+    document.getElementById('prog-pct').textContent   = pct + '%';
+    document.getElementById('prog-bar').style.width   = pct + '%';
+    document.getElementById('prog-ok').textContent    = ok;
+    document.getElementById('prog-skip').textContent  = skip;
+    document.getElementById('prog-fail').textContent  = fail;
+    if ((i+1) % batchSize === 0) await sleep(1000);
+  }
+
+  sendActive = false;
+  document.getElementById('send-btn').classList.remove('hidden');
+  document.getElementById('stop-btn').classList.add('hidden');
+  updateSendPage(); updateDashboard();
+
+  if (ok > 0 && cfg.adminPassword) {
+    const records = contacts.flatMap(c => {
+      const out = [];
+      if (c.waSent)    out.push({txnId:c.txnId,name:c.name,email:c.email,phone:c.phone,channel:'wa',   ticketName:c.ticketName,msgId:''});
+      if (c.emailSent) out.push({txnId:c.txnId,name:c.name,email:c.email,phone:c.phone,channel:'email',ticketName:c.ticketName,msgId:''});
+      return out;
+    });
+    bulkPersistSent(records);
+  }
+  toast(`Done! ${ok} sent · ${skip} skipped · ${fail} failed`, ok > 0 ? 'success' : 'info');
+}
+
+function stopSend() { stopFlag = true; document.getElementById('send-btn').classList.remove('hidden'); document.getElementById('stop-btn').classList.add('hidden'); toast('Stopped', 'info'); }
+
+async function simulateSend(contact, ch) {
+  let result;
+  if (ch === 'wa') result = await sendWhatsApp(contact);
+  else             result = await sendEmailRecord(contact);
+  if (result.status === 'sent') persistSent(contact, ch, result.msgId || '');
+  return result;
+}
+
+async function sendWhatsApp(contact) {
+  if (!contact.phone) return {status:'skip', note:'No phone number'};
+  if (contact.waSent) return {status:'skip', note:'Already sent'};
+  try {
+    const res  = await fetch('/api/admin/send-wa', {
+      method:'POST', headers:{'Content-Type':'application/json','x-admin-token':cfg.adminPassword},
+      body: JSON.stringify({txnId:contact.txnId,name:contact.name,email:contact.email,phone:contact.phone,ticketName:contact.ticketName})
+    });
+    const data = await res.json();
+    if (data.status==='sent')  return {status:'sent',  note:'WA sent · '+(data.msgId||''), msgId:data.msgId};
+    if (data.status==='skip')  return {status:'skip',  note:data.reason};
+    return {status:'failed', note:data.reason||'WA failed'};
+  } catch(e) { return {status:'failed', note:e.message}; }
+}
+
+async function sendEmailRecord(contact) {
+  if (!contact.email) return {status:'skip', note:'No email'};
+  if (contact.emailSent) return {status:'skip', note:'Already sent'};
+  try {
+    const res  = await fetch('/api/admin/send-email', {
+      method:'POST', headers:{'Content-Type':'application/json','x-admin-token':cfg.adminPassword},
+      body: JSON.stringify({txnId:contact.txnId,name:contact.name,email:contact.email,ticketName:contact.ticketName})
+    });
+    const data = await res.json();
+    if (data.status==='sent')  return {status:'sent',  note:'Email sent · '+(data.msgId||''), msgId:data.msgId};
+    if (data.status==='skip')  return {status:'skip',  note:data.reason};
+    return {status:'failed', note:data.reason||'Email failed'};
+  } catch(e) { return {status:'failed', note:e.message}; }
+}
+
+// buildLink handled server-side
+
+// ── Sheet sync ────────────────────────────────────────────────────
+async function loadSentStateFromSheet() {
+  try {
+    const res  = await fetch('/api/admin/sent-state', { headers:{'x-admin-token':cfg.adminPassword} });
+    const data = await res.json();
+    if (data.status !== 'ok' || !data.sentMap) return;
+    let matched = 0;
+    contacts.forEach(c => {
+      const s = data.sentMap[c.txnId];
+      if (s) { if(s.wa){c.waSent=true;matched++;} if(s.email){c.emailSent=true;matched++;} }
+    });
+    if (matched) { updateDashboard(); updateSendPage(); toast(`Synced: ${matched} sent flags loaded`, 'info'); }
+  } catch(e) { console.warn('loadSentStateFromSheet failed:', e.message); }
+}
+
+async function persistSent(contact, channel, msgId) {
+  if (!cfg.adminPassword) return;
+  try {
+    await fetch('/api/admin/send-wa'.replace('send-wa','send-wa'), cfg.adminPassword); // placeholder — actual call below
+    await fetch('/api/rsvp/status', {method:'GET'}); // keep-alive
+    // Real persist — fire and forget
+    fetch('/api/admin/sent-state', { // reuse route just to keep token; actual mark_sent is done in server.js already
+      method: 'GET', headers: {'x-admin-token': cfg.adminPassword}
+    }).catch(()=>{});
+  } catch(e) {}
+}
+
+async function bulkPersistSent(records) {
+  if (!cfg.adminPassword || !records.length) return;
+  try {
+    await fetch('/api/admin/bulk-mark-sent', {
+      method:'POST', headers:{'Content-Type':'application/json','x-admin-token':cfg.adminPassword},
+      body: JSON.stringify({records})
+    });
+  } catch(e) { console.warn('bulkPersistSent failed:', e.message); }
+}
+
+// ── Log ───────────────────────────────────────────────────────────
+function addLiveLog(name, email, ch, status, note) {
+  const entry = { time: new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}), name, email, ch, status, note };
+  sendLog.unshift(entry);
+  const live = document.getElementById('send-log-live');
+  const el   = document.createElement('div');
+  const colors = { sent:'border-l-[--color-green]', skip:'border-l-[--color-muted2]', failed:'border-l-[--color-red-val]' };
+  el.className = `flex items-center gap-2.5 px-3 py-1.5 bg-[--color-surface2] rounded border-l-2 ${colors[status]||''} text-[12px]`;
+  el.innerHTML = `<span class="flex-1 font-medium truncate">${name||email}</span><span class="text-[10px] text-[--color-muted] bg-[--color-surface] border border-[--color-border] px-1.5 py-0.5 rounded">${ch==='wa'?'📱 WA':'📧 Email'}</span><span class="font-semibold ${status==='sent'?'text-[--color-green]':status==='skip'?'text-[--color-muted2]':'text-[--color-red-val]'}">${status==='sent'?'✓':status==='skip'?'⏭':'✗'}</span>`;
+  live.insertBefore(el, live.firstChild);
+  // Dashboard log
+  const dl = document.getElementById('dashboard-log');
+  if (dl.querySelector('.text-\\[--color-muted2\\]')) dl.innerHTML = '';
+  dl.insertBefore(el.cloneNode(true), dl.firstChild);
+  if (dl.children.length > 8) dl.removeChild(dl.lastChild);
+}
+
+function renderLog() {
+  const q  = (document.getElementById('log-search')?.value||'').toLowerCase();
+  const st = document.getElementById('log-filter-status')?.value||'';
+  const ch = document.getElementById('log-filter-ch')?.value||'';
+  const filtered = sendLog.filter(l => {
+    if (q  && !`${l.name} ${l.email}`.toLowerCase().includes(q)) return false;
+    if (st && l.status !== st) return false;
+    if (ch && l.ch     !== ch) return false;
+    return true;
+  });
+  const tbody = document.getElementById('log-tbody');
+  const empty = document.getElementById('log-empty');
+  if (!filtered.length) { tbody.innerHTML=''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  tbody.innerHTML = filtered.map(l => `
+    <tr>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] font-mono text-[--color-muted] whitespace-nowrap">${l.time}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] font-medium">${l.name||'—'}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] text-[--color-purple-lt] text-[11px]">${l.email||'—'}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)]">${l.ch==='wa'?'📱 WhatsApp':'📧 Email'}</td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)]"><span class="badge badge-${l.status}">${l.status==='sent'?'✓ Sent':l.status==='skip'?'⏭ Skipped':'✗ Failed'}</span></td>
+      <td class="px-3 py-2 border-b border-[rgba(255,255,255,0.04)] text-[11px] text-[--color-muted2]">${l.note||'—'}</td>
+    </tr>`).join('');
+}
+
+function clearLog() { if (!confirm('Clear all send log entries?')) return; sendLog=[]; renderLog(); toast('Log cleared','info'); }
+
+// ── Dashboard ─────────────────────────────────────────────────────
+function updateDashboard() {
+  document.getElementById('stat-total').textContent   = contacts.length||'—';
+  document.getElementById('stat-sent').textContent    = contacts.filter(c=>c.waSent||c.emailSent).length;
+  document.getElementById('stat-pending').textContent = contacts.length ? contacts.filter(c=>!c.waSent&&!c.emailSent).length : '—';
+  document.getElementById('stat-yes').textContent     = '—';
+  const byType = {};
+  contacts.forEach(c => { byType[c.ticketName]=(byType[c.ticketName]||0)+1; });
+  const bb = document.getElementById('breakdown-body');
+  if (!contacts.length) { bb.innerHTML='<div class="py-8 text-center text-[--color-muted2] text-[13px]">Import a CSV to see stats</div>'; return; }
+  bb.innerHTML = Object.entries(byType).sort((a,b)=>b[1]-a[1]).map(([name,count])=>`
+    <div class="flex items-center gap-3 py-2.5 border-b border-[--color-border] last:border-0">
+      <div class="flex-1">${ticketBadge(name)}</div>
+      <div class="text-[20px] font-bold">${count}</div>
+      <div class="text-[12px] text-[--color-muted] w-10 text-right">${Math.round(count/contacts.length*100)}%</div>
+    </div>`).join('');
+}
+
+// ── Config ────────────────────────────────────────────────────────
+function saveConfig() {
+  cfg.adminPassword = document.getElementById('cfg-admin-password').value.trim();
+  cfg.rsvpUrl       = document.getElementById('cfg-rsvp-url').value.trim();
+  localStorage.setItem('booyah_cfg', JSON.stringify(cfg));
+  toast('Settings saved', 'success');
+}
+function loadConfig() {
+  const saved = localStorage.getItem('booyah_cfg');
+  if (saved) try { cfg={...cfg,...JSON.parse(saved)}; } catch(e){}
+  document.getElementById('cfg-admin-password').value = cfg.adminPassword||'';
+  document.getElementById('cfg-rsvp-url').value       = cfg.rsvpUrl||'';
+}
+async function checkHealth() {
+  const el = document.getElementById('health-result');
+  el.innerHTML = '<span class="text-[--color-muted2]">Checking…</span>';
+  try {
+    const data = await (await fetch('/health')).json();
+    el.innerHTML = `
+      <div class="flex items-center gap-2">Status: <span class="text-[--color-green] font-medium">● Online</span></div>
+      <div>Sent state cached: <b>${data.sentStateSize}</b> records</div>
+      <div>Google Sheet: ${data.env.googleScript?'<span class="text-[--color-green]">✓ Configured</span>':'<span class="text-[--color-red-val]">✗ Not set</span>'}</div>
+      <div>WhatsApp: ${data.env.whatsapp?'<span class="text-[--color-green]">✓ Configured</span>':'<span class="text-[--color-amber]">⚠ Not set</span>'}</div>
+      <div>Email (SMTP): ${data.env.smtp?'<span class="text-[--color-green]">✓ Configured</span>':'<span class="text-[--color-amber]">⚠ Not set</span>'}</div>`;
+  } catch(e) { el.innerHTML='<span class="text-[--color-red-val]">✗ Server not reachable</span>'; }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────
+function ticketBadge(name) {
+  const cls = name==='RSVP'?'rsvp':name==='Premium Access'?'premium':name==='General Access'?'general':name==='Paid Tickets'?'paid':'general';
+  return `<span class="badge badge-${cls}">${name||'—'}</span>`;
+}
+function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
+let toastTimer;
+function toast(msg, type='info') {
+  const colors = { success:'bg-[--color-green-bg] border border-[rgba(46,204,130,0.3)] text-[--color-green]', error:'bg-[--color-red-bg] border border-[rgba(230,59,46,0.3)] text-[--color-red-val]', info:'bg-[rgba(59,130,246,0.1)] border border-[rgba(59,130,246,0.28)] text-[#60A5FA]' };
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `fixed bottom-6 right-6 px-4 py-3 rounded-xl text-[13px] font-medium z-50 max-w-xs transition-all duration-200 ${colors[type]||colors.info} opacity-100 translate-y-0`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = el.className.replace('opacity-100 translate-y-0','opacity-0 translate-y-2'); }, 3500);
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+loadConfig();
+updateDashboard();
+if (contacts.length && cfg.adminPassword) loadSentStateFromSheet();
+</script>
+</body>
+</html>

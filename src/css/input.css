@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gold:        #F5C842;
+  --color-gold-dim:    #C9982A;
+  --color-gold-light:  #FDE68A;
+  --color-purple:      #7B3FBE;
+  --color-purple-lt:   #9D5FD6;
+  --color-purple-dim:  #4C2678;
+
+  --color-bg:          #0C0A14;
+  --color-surface:     #13102A;
+  --color-surface2:    #1B1633;
+  --color-surface3:    #221E3A;
+
+  --color-border:      rgba(255,255,255,0.08);
+  --color-border2:     rgba(255,255,255,0.14);
+
+  --color-body:        #EDEEF2;
+  --color-muted:       #9090A8;
+  --color-muted2:      #6A6A80;
+
+  --color-green:       #2ECC82;
+  --color-green-bg:    rgba(46,204,130,0.12);
+  --color-red-val:     #E63B2E;
+  --color-red-bg:      rgba(230,59,46,0.10);
+  --color-amber:       #F59E0B;
+  --color-amber-bg:    rgba(245,158,11,0.10);
+  --color-blue-val:    #3B82F6;
+  --color-blue-bg:     rgba(59,130,246,0.10);
+
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+
+  --animate-spin-slow: spin 0.7s linear infinite;
+}
+
+/* ── Base resets ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { background-color: var(--color-bg); }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-body);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 10px; }
+
+/* ── Spinner keyframe ── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  display: inline-block;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+
+/* ── Progress bar gradient ── */
+.progress-bar {
+  background: linear-gradient(90deg, var(--color-purple), var(--color-gold));
+  transition: width 0.3s ease;
+}
+
+/* ── Bebas display font ── */
+.font-display { font-family: var(--font-display); }
