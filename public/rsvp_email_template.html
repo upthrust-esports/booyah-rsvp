@@ -1,56 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
 <title>RSVP – The Booyah Awards 2026</title>
-</head>
-<body style="margin:0;padding:0;background:#0C0A14;font-family:'Helvetica Neue',Arial,sans-serif;">
+<style type="text/css">
+  /* Reset */
+  body, table, td, a { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+  table, td { mso-table-lspace:0pt; mso-table-rspace:0pt; }
+  img { -ms-interpolation-mode:bicubic; border:0; outline:none; text-decoration:none; }
 
-<!-- Preheader -->
+  /* Force dark background on all clients */
+  body,
+  #body-wrap,
+  .outer-td,
+  .outer-bg {
+    background-color: #0C0A14 !important;
+  }
+
+  /* Gmail App dark mode override */
+  [data-ogsc] body,
+  [data-ogsc] #body-wrap,
+  [data-ogsc] .outer-td {
+    background-color: #0C0A14 !important;
+  }
+
+  /* Apple Mail / iOS dark mode */
+  @media (prefers-color-scheme: dark) {
+    body, .outer-bg, .outer-td {
+      background-color: #0C0A14 !important;
+    }
+  }
+
+  /* Mobile responsive */
+  @media only screen and (max-width: 600px) {
+    .email-container { width: 100% !important; }
+    .pad-mobile { padding: 18px 20px !important; }
+    .hero-img { border-radius: 14px 14px 0 0 !important; }
+    .footer-radius { border-radius: 0 0 14px 14px !important; }
+    .btn-yes, .btn-no { font-size: 15px !important; padding: 15px 18px !important; }
+  }
+</style>
+</head>
+
+<body id="body-wrap"
+  style="margin:0;padding:0;background-color:#0C0A14 !important;background:#0C0A14 !important;font-family:'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+
+<!-- Preheader text (hidden) -->
 <div style="display:none;font-size:1px;color:#0C0A14;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
   Your ticket is confirmed for The Booyah Awards 2026 — confirm your attendance now
 </div>
 
-<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0C0A14;padding:32px 16px;">
+<!-- Full-width dark wrapper div — catches Gmail mobile which ignores body bg -->
+<div class="outer-bg" style="background-color:#0C0A14 !important;width:100%;min-width:100%;">
+
+<table id="outer-table" width="100%" cellpadding="0" cellspacing="0" border="0"
+  bgcolor="#0C0A14"
+  style="background-color:#0C0A14 !important;background:#0C0A14 !important;width:100%;">
 <tr>
-<td align="center">
-<table width="580" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;width:100%;">
+<td class="outer-td" align="center" valign="top" bgcolor="#0C0A14"
+  style="background-color:#0C0A14 !important;padding:32px 16px;">
 
-  <!-- HERO BANNER -->
-  <tr>
-    <td style="border-radius:20px 20px 0 0;overflow:hidden;border:1px solid rgba(255,255,255,0.07);border-bottom:none;line-height:0;font-size:0;">
-      <img src="https://res.cloudinary.com/dopqilo8o/image/upload/q_auto/f_auto/v1779379488/WhatsApp_Image_2026-05-21_at_4.30.13_PM_b4cofs.jpg"
-           width="580" style="display:block;width:100%;border-radius:20px 20px 0 0;" alt="The Booyah Awards 2026">
-    </td>
-  </tr>
+  <!-- ── INNER CONTAINER ── -->
+  <table class="email-container" width="580" cellpadding="0" cellspacing="0" border="0"
+    style="max-width:580px;width:100%;">
 
-  <!-- GREETING -->
-  <tr>
-    <td style="background:rgba(122, 63, 190, 0.658);border:1px solid rgba(255,255,255,0.07);border-top:none;border-bottom:none;padding:24px 36px;">
-      <p style="margin:0;font-size:20px;font-weight:700;color:#E8E3F2;">
-        Hey {{NAME}}
-      </p>
-      <p style="margin:8px 0 0;font-size:14px;color:#8A8D9E;line-height:1.7;">
-        Your ticket for <strong style="color:#F5C842;">The Booyah Awards 2026</strong> is confirmed.
-        Please let us know if you'll be attending.
-      </p>
-    </td>
-  </tr>
+    <!-- ══ HERO BANNER ══ -->
+    <tr>
+      <td style="border-radius:20px 20px 0 0;overflow:hidden;border:1px solid rgba(255,255,255,0.07);border-bottom:none;line-height:0;font-size:0;padding:0;">
+        <img class="hero-img"
+          src="https://res.cloudinary.com/dopqilo8o/image/upload/q_auto/f_auto/v1779379488/WhatsApp_Image_2026-05-21_at_4.30.13_PM_b4cofs.jpg"
+          width="580"
+          style="display:block;width:100%;max-width:580px;border-radius:20px 20px 0 0;"
+          alt="The Booyah Awards 2026">
+      </td>
+    </tr>
 
-  <!-- EVENT DETAILS -->
-  <tr>
-    <td style="background:rgba(122, 63, 190, 0.658);border:1px solid rgba(255,255,255,0.07);border-top:none;border-bottom:none;padding:28px 36px;">
+    <!-- ══ GREETING ══ -->
+    <tr>
+      <td class="pad-mobile"
+        bgcolor="#7a3fbe"
+        style="background:rgba(122,63,190,0.85);background-color:#7a3fbe;border:1px solid rgba(255,255,255,0.07);border-top:none;border-bottom:none;padding:24px 36px;">
+        <p style="margin:0;font-size:20px;font-weight:700;color:#E8E3F2;">
+          Hey {{NAME}} 👋
+        </p>
+        <p style="margin:8px 0 0;font-size:14px;color:#d4d4d4;line-height:1.7;">
+          Your ticket for <strong style="color:#F5C842;">The Booyah Awards 2026</strong> is confirmed.
+          Please let us know if you'll be attending — it helps us plan for you.
+        </p>
+      </td>
+    </tr>
 
-      <div style="font-size:10px;color:#7A748F;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;font-weight:600;">Event Details</div>
+     <!-- ══ RSVP BUTTONS ══ -->
+    <tr>
+      <td class="pad-mobile"
+        bgcolor="#7a3fbe"
+        style="background:rgba(122,63,190,0.85);background-color:#7a3fbe;border:1px solid rgba(194, 194, 194, 0.07);border-top:none;border-bottom:none;padding:28px 36px;">
 
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.07);">
+        <div style="font-size:10px;color:#d4d4d4;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;font-weight:600;">Confirm Your Attendance</div>
 
-        <!-- Date -->
-        <tr>
-          <td style="background:#1A1828;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);">
-            <table cellpadding="0" cellspacing="0" border="0">
-              <tr>
+        <!-- YES button -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:10px;">
+          <tr>
+            <td align="center">
+              <a class="btn-yes"
+                href="https://booyah-rsvp.onrender.com/rsvp.html?tid={{TICKET_ID}}&name={{NAME_ENC}}&email={{EMAIL_ENC}}&pass={{PASS_ENC}}&src=email&confirm=YES"
+                target="_blank"
+                style="display:block;width:100%;background-color:#F5C842;color:#0C0A14;text-decoration:none;font-size:16px;font-weight:800;padding:17px 24px;border-radius:13px;text-align:center;letter-spacing:0.3px;box-sizing:border-box;font-family:'Arial Black','Helvetica Neue',Arial,sans-serif;">
+                🎉 &nbsp;Yes, I'll be there!
+              </a>
+            </td>
+          </tr>
+        </table>
+
+        <!-- NO button -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:22px;">
+          <tr>
+            <td align="center">
+              <a class="btn-no"
+                href="https://booyah-rsvp.onrender.com/rsvp.html?tid={{TICKET_ID}}&name={{NAME_ENC}}&email={{EMAIL_ENC}}&pass={{PASS_ENC}}&src=email&confirm=NO"
+                target="_blank"
+                style="display:block;width:100%;background-color:transparent;color:#d4d4d4;text-decoration:none;font-size:14px;font-weight:500;padding:14px 24px;border-radius:13px;text-align:center;border:1px solid rgba(255,255,255,0.12);box-sizing:border-box;">
+                Can't make it
+              </a>
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:0;font-size:12px;color:#d4d4d4;line-height:1.7;text-align:center;">
+          You can update your response any time before the event.
+        </p>
+
+      </td>
+    </tr>
+
+    <!-- ══ EVENT DETAILS ══ -->
+    <tr>
+      <td class="pad-mobile"
+        bgcolor="#7a3fbe"
+        style="background:rgba(122,63,190,0.85);background-color:#7a3fbe;border:1px solid rgba(255,255,255,0.07);border-top:none;border-bottom:none;padding:28px 36px;">
+
+        <div style="font-size:10px;color:#a09ab8;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;font-weight:600;">Event Details</div>
+
+        <table width="100%" cellpadding="0" cellspacing="0" border="0"
+          style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.07);">
+
+          <!-- Date -->
+          <tr>
+            <td bgcolor="#1A1828" style="background-color:#1A1828;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);">
+              <table cellpadding="0" cellspacing="0" border="0"><tr>
                 <td style="width:32px;vertical-align:middle;">
                   <div style="width:32px;height:32px;background:rgba(245,200,66,0.1);border-radius:8px;border:1px solid rgba(245,200,66,0.18);text-align:center;line-height:32px;font-size:14px;">📅</div>
                 </td>
@@ -58,16 +159,14 @@
                   <div style="font-size:10px;color:#7A748F;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Date</div>
                   <div style="font-size:14px;font-weight:600;color:#E8E3F2;">Saturday, 6 June 2026</div>
                 </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
+              </tr></table>
+            </td>
+          </tr>
 
-        <!-- Time -->
-        <tr>
-          <td style="background:#1A1828;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);">
-            <table cellpadding="0" cellspacing="0" border="0">
-              <tr>
+          <!-- Time -->
+          <tr>
+            <td bgcolor="#1A1828" style="background-color:#1A1828;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);">
+              <table cellpadding="0" cellspacing="0" border="0"><tr>
                 <td style="width:32px;vertical-align:middle;">
                   <div style="width:32px;height:32px;background:rgba(245,200,66,0.1);border-radius:8px;border:1px solid rgba(245,200,66,0.18);text-align:center;line-height:32px;font-size:14px;">⏰</div>
                 </td>
@@ -75,16 +174,14 @@
                   <div style="font-size:10px;color:#7A748F;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Gates open / Show</div>
                   <div style="font-size:14px;font-weight:600;color:#E8E3F2;">12:30 PM onwards · Show 12:00 – 6:30 PM IST</div>
                 </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
+              </tr></table>
+            </td>
+          </tr>
 
-        <!-- Venue -->
-        <tr>
-          <td style="background:#1A1828;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);">
-            <table cellpadding="0" cellspacing="0" border="0">
-              <tr>
+          <!-- Venue -->
+          <tr>
+            <td bgcolor="#1A1828" style="background-color:#1A1828;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);">
+              <table cellpadding="0" cellspacing="0" border="0"><tr>
                 <td style="width:32px;vertical-align:top;padding-top:2px;">
                   <div style="width:32px;height:32px;background:rgba(245,200,66,0.1);border-radius:8px;border:1px solid rgba(245,200,66,0.18);text-align:center;line-height:32px;font-size:14px;">📍</div>
                 </td>
@@ -92,20 +189,18 @@
                   <div style="font-size:10px;color:#7A748F;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Venue</div>
                   <div style="font-size:14px;font-weight:600;color:#E8E3F2;">India Expo Centre &amp; Mart, Greater Noida</div>
                   <a href="https://maps.app.goo.gl/B2doQttFHaH8Q2wQ8" target="_blank"
-                     style="font-size:12px;color:#A78BFA;text-decoration:none;display:inline-block;margin-top:3px;">
+                    style="font-size:12px;color:#A78BFA;text-decoration:none;display:inline-block;margin-top:3px;">
                     View on Google Maps &rarr;
                   </a>
                 </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
+              </tr></table>
+            </td>
+          </tr>
 
-        <!-- Transport -->
-        <tr>
-          <td style="background:#1A1828;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);">
-            <table cellpadding="0" cellspacing="0" border="0">
-              <tr>
+          <!-- Transport -->
+          <tr>
+            <td bgcolor="#1A1828" style="background-color:#1A1828;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);">
+              <table cellpadding="0" cellspacing="0" border="0"><tr>
                 <td style="width:32px;vertical-align:middle;">
                   <div style="width:32px;height:32px;background:rgba(245,200,66,0.1);border-radius:8px;border:1px solid rgba(245,200,66,0.18);text-align:center;line-height:32px;font-size:14px;">🚇</div>
                 </td>
@@ -114,106 +209,48 @@
                   <div style="font-size:14px;font-weight:600;color:#E8E3F2;">Metro to Knowledge Park II / Jaypee Greens</div>
                   <div style="font-size:12px;color:#7A748F;margin-top:2px;">Free shuttle buses available at metro exit</div>
                 </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
+              </tr></table>
+            </td>
+          </tr>
 
-        <!-- Pass -->
-        <tr>
-          <td style="background:#1A1828;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);">
-            <table cellpadding="0" cellspacing="0" border="0">
-              <tr>
-                <td style="width:32px;vertical-align:middle;">
-                  <div style="width:32px;height:32px;background:rgba(245,200,66,0.1);border-radius:8px;border:1px solid rgba(245,200,66,0.18);text-align:center;line-height:32px;font-size:14px;">🎫</div>
-                </td>
-                <td style="padding-left:12px;vertical-align:middle;">
-                  <div style="font-size:10px;color:#7A748F;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Pass</div>
-                  <div style="font-size:14px;font-weight:600;color:#F5C842;">{{PASS}}</div>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
+          
 
-        <!-- Ticket ID -->
-        <tr>
-          <td style="background:#1A1828;padding:14px 18px;">
-            <table cellpadding="0" cellspacing="0" border="0">
-              <tr>
-                <td style="width:32px;vertical-align:middle;">
-                  <div style="width:32px;height:32px;background:rgba(245,200,66,0.1);border-radius:8px;border:1px solid rgba(245,200,66,0.18);text-align:center;line-height:32px;font-size:14px;">🎟</div>
-                </td>
-                <td style="padding-left:12px;vertical-align:middle;">
-                  <div style="font-size:10px;color:#7A748F;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Ticket ID</div>
-                  <div style="font-size:13px;font-weight:500;color:#E8E3F2;font-family:monospace,Courier,sans-serif;">{{TICKET_ID}}</div>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
+        
+        </table>
+      </td>
+    </tr>
 
-      </table>
-    </td>
-  </tr>
+   
 
-  <!-- RSVP BUTTONS -->
-  <tr>
-    <td style="background:rgba(122, 63, 190, 0.658);border:1px solid rgba(255,255,255,0.07);border-top:none;border-bottom:none;padding:28px 36px;">
+    <!-- ══ FOOTER ══ -->
+    <tr>
+      <td class="pad-mobile footer-radius"
+        bgcolor="#7a3fbe"
+        style="background:rgba(122,63,190,0.85);background-color:#7a3fbe;border-radius:0 0 20px 20px;border:1px solid rgba(255,255,255,0.07);border-top:none;padding:22px 36px;text-align:center;">
+        <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(245,200,66,0.25),transparent);margin-bottom:18px;"></div>
+        <p style="margin:0 0 6px;font-size:12px;color:#bcb8d0;">
+          The Booyah Awards 2026 &middot; Greater Noida
+        </p>
+        <p style="margin:0;font-size:11px;color:#9490a8;line-height:1.8;">
+          You received this because you registered for The Booyah Awards 2026.<br>
+          <a href="{{UNSUBSCRIBE_LINK}}" style="color:#9490a8;text-decoration:underline;">Unsubscribe</a>
+        </p>
+      </td>
+    </tr>
 
-      <div style="font-size:10px;color:#7A748F;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;font-weight:600;">Confirm Your Attendance</div>
+    <!-- Bottom spacer -->
+    <tr>
+      <td bgcolor="#0C0A14" style="background-color:#0C0A14;height:32px;font-size:0;line-height:0;">&nbsp;</td>
+    </tr>
 
-      <!-- YES — opens RSVP page, auto-confirms YES -->
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:10px;">
-        <tr>
-          <td align="center">
-            <a href="https://booyah-rsvp.onrender.com/rsvp.html?tid={{TICKET_ID}}&name={{NAME_ENC}}&email={{EMAIL_ENC}}&pass={{PASS_ENC}}&src=email&confirm=YES"
-               target="_blank"
-               style="display:block;width:100%;background:#F5C842;color:#0C0A14;text-decoration:none;font-size:16px;font-weight:800;padding:17px 24px;border-radius:13px;text-align:center;letter-spacing:0.3px;box-sizing:border-box;font-family:'Arial Black','Helvetica Neue',Arial,sans-serif;">
-              Yes, I'll be there
-            </a>
-          </td>
-        </tr>
-      </table>
+  </table>
+  <!-- ── END INNER CONTAINER ── -->
 
-      <!-- NO — opens RSVP page, auto-confirms NO -->
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:22px;">
-        <tr>
-          <td align="center">
-            <a href="https://booyah-rsvp.onrender.com/rsvp.html?tid={{TICKET_ID}}&name={{NAME_ENC}}&email={{EMAIL_ENC}}&pass={{PASS_ENC}}&src=email&confirm=NO"
-               target="_blank"
-               style="display:block;width:100%;background:transparent;color:#7A748F;text-decoration:none;font-size:14px;font-weight:500;padding:14px 24px;border-radius:13px;text-align:center;border:1px solid rgba(255,255,255,0.09);box-sizing:border-box;">
-              Can't make it
-            </a>
-          </td>
-        </tr>
-      </table>
-
-      <p style="margin:0;font-size:12px;color:#3E3A50;line-height:1.7;text-align:center;">
-        You can update your response any time before the event.
-      </p>
-
-    </td>
-  </tr>
-
-  <!-- FOOTER -->
-  <tr>
-    <td style="background:rgba(122, 63, 190, 0.658);border-radius:0 0 20px 20px;border:1px solid rgba(255,255,255,0.07);border-top:none;padding:22px 36px;text-align:center;">
-      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(245,200,66,0.2),transparent);margin-bottom:18px;"></div>
-      <p style="margin:0 0 6px;font-size:12px;color:#d4d4d4;">
-        The Booyah Awards 2026 &middot; Greater Noida
-      </p>
-      <p style="margin:0;font-size:11px;color:#d4d4d4;line-height:1.8;">
-        You received this because you registered for The Booyah Awards 2026.<br>
-        <a href="{{UNSUBSCRIBE_LINK}}" style="color:#d4d4d4;text-decoration:underline;">Unsubscribe</a>
-      </p>
-    </td>
-  </tr>
-
-</table>
 </td>
 </tr>
 </table>
+
+</div><!-- end outer-bg div -->
 
 </body>
 </html>
