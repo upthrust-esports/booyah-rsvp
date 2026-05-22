@@ -79,8 +79,6 @@
   .btn-icon-wrap { display: flex; align-items: center; justify-content: center; }
   .btn-label { font-size: 15px; font-weight: 600; }
   .btn-sub { font-size: 11px; text-align: center; }
-
-  /* ── Pincode ── */
   .pincode-wrap { margin-bottom: .75rem; }
   .pincode-input {
     width: 100%;
@@ -100,13 +98,8 @@
   .pincode-input::placeholder { letter-spacing: 0; }
   .pincode-error { display: none; color: var(--color-red-val); font-size: 11px; margin-top: 4px; }
   .pincode-hint { font-size: 9px; color: var(--color-muted); margin-top: 4px; }
-
   .loading-state { display: none; text-align: center; padding: .75rem; font-size: 13px; color: var(--color-muted); }
   .error-box { display: none; background: var(--color-red-bg); border: 0.5px solid rgba(230,59,46,0.3); color: var(--color-red-val); padding: .65rem .9rem; border-radius: 8px; font-size: 13px; margin-top: .5rem; }
-  .meta-grid { background: var(--color-surface2); border-radius: 10px; padding: .75rem; display: flex; flex-direction: column; gap: 6px; margin-top: .75rem; }
-  .meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
-  .meta-key { color: var(--color-gold); display: flex; align-items: center; gap: 5px; }
-  .meta-val { font-weight: 500; color: var(--color-body); font-family: monospace; }
   .detail-row { display: flex; align-items: flex-start; gap: 12px; padding: .65rem 0; border-bottom: 0.5px solid var(--color-border); }
   .detail-row:last-child { border-bottom: none; }
   .detail-icon { width: 34px; height: 34px; flex-shrink: 0; border-radius: 8px; background: var(--color-surface2); border: 0.5px solid var(--color-border); display: flex; align-items: center; justify-content: center; color: var(--color-gold); }
@@ -126,7 +119,7 @@
 <div class="wrap">
 
   <div class="banner">
-    <img src='/banner.jpg' alt="The Booyah Awards 2026">
+    <img src="/banner.jpg" alt="The Booyah Awards 2026">
     <div class="banner-fade"></div>
   </div>
 
@@ -137,7 +130,6 @@
         <div class="attendee-name" id="nameEl">Loading…</div>
         <div class="attendee-email" id="emailEl">–</div>
       </div>
-      <!-- <span class="pass-badge" id="passEl">–</span> -->
     </div>
   </div>
 
@@ -173,47 +165,23 @@
       </button>
     </div>
 
-    <!-- ── Pincode — optional ── -->
+    <!-- Pincode — optional -->
     <div class="pincode-wrap">
-      <label class="sec-label" style="display:block;margin-bottom:.5rem;">
-        Pincode
-        <span style="color:var(--color-muted);font-size:10px;text-transform:none;letter-spacing:0;margin-left:4px;">(optional)</span>
-      </label>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <input
-          type="tel"
-          id="pincodeInput"
-          class="pincode-input"
-          maxlength="6"
-          placeholder="Enter 6-digit pincode"
-          oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-        >
-      </div>
+      <label class="sec-label" style="display:block;margin-bottom:.5rem;">Pincode</label>
+      <input
+        type="tel"
+        id="pincodeInput"
+        class="pincode-input"
+        maxlength="6"
+        placeholder="Enter 6-digit pincode"
+        oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+      >
       <div class="pincode-error" id="pincodeError">Please enter a valid 6-digit pincode.</div>
-      <div class="pincode-hint">To better plan free transport from nearest metro stations from the venue, Knowledge Park 2 and Pari Chowk.</div>
+      <div class="pincode-hint">To better plan free transport from nearest metro stations — Knowledge Park 2 and Pari Chowk.</div>
     </div>
 
     <div class="loading-state" id="loadingEl">Saving your response…</div>
     <div class="error-box" id="errorBox"></div>
-
-    <!-- <div class="meta-grid">
-      <div class="meta-row">
-        <span class="meta-key"><i data-lucide="ticket" class="icon-16"></i> Ticket ID</span>
-        <span class="meta-val" id="tidEl">–</span>
-      </div>
-      <div class="meta-row">
-        <span class="meta-key"><i data-lucide="badge-check" class="icon-16"></i> Pass</span>
-        <span class="meta-val" id="passMetaEl">–</span>
-      </div>
-      <div class="meta-row">
-        <span class="meta-key"><i data-lucide="send" class="icon-16"></i> Channel</span>
-        <span class="meta-val" id="sourceEl">–</span>
-      </div>
-      <div class="meta-row" id="pincodeMetaRow" style="display:none;">
-        <span class="meta-key"><i data-lucide="map-pin" class="icon-16"></i> Pincode</span>
-        <span class="meta-val" id="pincodeMetaEl">–</span>
-      </div>
-    </div> -->
   </div>
 
   <div class="card">
@@ -261,152 +229,19 @@
   <div class="footer"><span>The Booyah Awards 2026</span></div>
 </div>
 
+<!--
+  Config block — passes Apps Script URL to rsvp.js without exposing it
+  in the main HTML or requiring an extra API call.
+  Replace the scriptUrl value with your deployed Apps Script URL.
+-->
 <script>
-  lucide.createIcons();
-
-  // ─────────────────────────────────────────────────────────────
-  // 🔧 REPLACE WITH YOUR DEPLOYED APPS SCRIPT URL
-  // ─────────────────────────────────────────────────────────────
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyzOICbUCLU68acEaJhExudJW5rGgfjIvnNwZUCWmRYE1Rlv7z7RgmvAuOEwmUuyPW3HA/exec';
-
-  const p     = new URLSearchParams(window.location.search);
-  const tid   = p.get('tid')   || 'TCK-DEMO';
-  const name  = decodeURIComponent(p.get('name')  || 'Attendee');
-  const email = decodeURIComponent(p.get('email') || '');
-  const pass  = decodeURIComponent(p.get('pass')  || 'Booyah Pass');
-  const src   = p.get('src')   || 'direct';
-
-  document.getElementById('nameEl').textContent     = name;
-  document.getElementById('emailEl').textContent    = email || '—';
-  document.getElementById('passEl').textContent     = pass;
-  document.getElementById('passMetaEl').textContent = pass;
-  document.getElementById('tidEl').textContent      = tid;
-  document.getElementById('avatarEl').textContent   =
-    name.trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-  document.getElementById('sourceEl').textContent   =
-    src === 'wa' ? 'WhatsApp' : src === 'email' ? 'Email' : 'Direct';
-
-  const preConfirm = p.get('confirm');
-
-  // ── LOAD STATUS ───────────────────────────────────────────────
-  async function loadStatus() {
-    try {
-      const url = `${SCRIPT_URL}?action=get&tid=${encodeURIComponent(tid)}`;
-      const r   = await fetch(url);
-      const d   = await r.json();
-      if (d.status === 'ok') showStatus(d.current);
-    } catch(e) {
-      console.warn('loadStatus failed:', e.message);
-    }
-  }
-
-  function showStatus(c) {
-    if (!c) return;
-    document.getElementById('yesBar').classList.toggle('show', c.response === 'YES');
-    document.getElementById('noBar').classList.toggle('show',  c.response === 'NO');
-    document.getElementById('yesTime').textContent = 'Last updated: ' + c.time;
-    document.getElementById('noTime').textContent  = 'Last updated: ' + c.time;
-    document.getElementById('yesBtn').classList.toggle('yes-active', c.response === 'YES');
-    document.getElementById('noBtn').classList.toggle('no-active',   c.response === 'NO');
-
-    // Show saved pincode in meta grid
-    if (c.pincode) {
-      document.getElementById('pincodeMetaEl').textContent    = c.pincode;
-      document.getElementById('pincodeMetaRow').style.display = 'flex';
-      // Pre-fill and lock pincode input if already saved
-      const inp = document.getElementById('pincodeInput');
-      inp.value    = c.pincode;
-      inp.disabled = true;
-    }
-  }
-
-  // ── SUBMIT RSVP ───────────────────────────────────────────────
-  let busy = false;
-  async function submitRSVP(resp) {
-    if (busy) return;
-
-    // Validate pincode if filled — must be exactly 6 digits
-    const pincodeVal = document.getElementById('pincodeInput').value.trim();
-    const errEl      = document.getElementById('pincodeError');
-    const inpEl      = document.getElementById('pincodeInput');
-
-    if (pincodeVal && pincodeVal.length !== 6) {
-      errEl.style.display = 'block';
-      inpEl.style.borderColor = 'var(--color-red-val)';
-      return;
-    }
-    errEl.style.display    = 'none';
-    inpEl.style.borderColor = '';
-
-    busy = true;
-    const yb = document.getElementById('yesBtn');
-    const nb = document.getElementById('noBtn');
-    yb.disabled = nb.disabled = true;
-    document.getElementById('loadingEl').style.display = 'block';
-    document.getElementById('errorBox').style.display  = 'none';
-    document.getElementById('yesBar').classList.remove('show');
-    document.getElementById('noBar').classList.remove('show');
-    yb.classList.remove('yes-active');
-    nb.classList.remove('no-active');
-
-    const body = new URLSearchParams({
-      action:   'rsvp',
-      tid, name, email, pass,
-      response: resp,
-      source:   src,
-      pincode:  pincodeVal,
-      ua:       navigator.userAgent.slice(0, 200),
-      ts:       new Date().toISOString()
-    });
-
-    // NEW — post to your Node server instead, which proxies to Apps Script as JSON
-try {
-  await fetch('/api/rsvp/respond', {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      action:   'rsvp',
-      tid, name, email, pass,
-      response: resp,
-      source:   src,
-      pincode:  pincodeVal,
-      ua:       navigator.userAgent.slice(0, 200),
-      ts:       new Date().toISOString()
-    })
-  });
-      document.getElementById('loadingEl').style.display = 'none';
-
-      // Lock pincode after successful submit
-      if (pincodeVal) {
-        inpEl.disabled = true;
-        document.getElementById('pincodeMetaEl').textContent    = pincodeVal;
-        document.getElementById('pincodeMetaRow').style.display = 'flex';
-      }
-
-      showStatus({
-        response: resp,
-        pincode:  pincodeVal,
-        time:     new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
-      });
-
-    } catch(e) {
-      document.getElementById('loadingEl').style.display = 'none';
-      const eb = document.getElementById('errorBox');
-      eb.textContent = 'Network error. Please try again.';
-      eb.style.display = 'block';
-    }
-
-    yb.disabled = nb.disabled = busy = false;
-  }
-
-  async function init() {
-    await loadStatus();
-    if (preConfirm === 'YES' || preConfirm === 'NO') {
-      setTimeout(() => submitRSVP(preConfirm), 600);
-    }
-  }
-
-  init();
+  window.__RSVP_CONFIG__ = {
+    scriptUrl: 'https://script.google.com/macros/s/AKfycbyzOICbUCLU68acEaJhExudJW5rGgfjIvnNwZUCWmRYE1Rlv7z7RgmvAuOEwmUuyPW3HA/exec'
+  };
 </script>
+
+<!-- Load Lucide first (CDN), then our script -->
+<script src="/rsvp.js"></script>
+
 </body>
 </html>
