@@ -359,14 +359,21 @@
       ts:       new Date().toISOString()
     });
 
-    try {
-      await fetch(SCRIPT_URL, {
-        method:  'POST',
-        mode:    'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body:    body.toString()
-      });
-
+    // NEW — post to your Node server instead, which proxies to Apps Script as JSON
+try {
+  await fetch('/api/rsvp/respond', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action:   'rsvp',
+      tid, name, email, pass,
+      response: resp,
+      source:   src,
+      pincode:  pincodeVal,
+      ua:       navigator.userAgent.slice(0, 200),
+      ts:       new Date().toISOString()
+    })
+  });
       document.getElementById('loadingEl').style.display = 'none';
 
       // Lock pincode after successful submit
