@@ -77,14 +77,25 @@
     const bar = document.getElementById('submitBar');
     bar.style.display = 'block';
 
-    // Update submit bar label
+    // Update submit bar label, hint and button text based on response
     const label = document.getElementById('submitBarLabel');
+    const hint  = document.getElementById('submitBarHint');
+    const btn   = document.getElementById('submitBtn');
+
     if (resp === 'YES') {
-      label.textContent  = "You're saying YES 🎉";
-      label.style.color  = 'var(--color-green)';
+      label.textContent = "You're saying YES 🎉";
+      label.style.color = 'var(--color-green)';
+      hint.textContent  = 'Add your pincode above (optional), then confirm your attendance.';
+      btn.textContent   = "Yes, confirm my attendance →";
+      btn.style.background = 'var(--color-gold)';
+      btn.style.color      = '#0C0A14';
     } else {
-      label.textContent  = "You're saying Can't make it";
-      label.style.color  = 'var(--color-red-val)';
+      label.textContent = "You're saying Can't make it";
+      label.style.color = 'var(--color-red-val)';
+      hint.textContent  = 'Add your pincode above (optional), then confirm you can\'t attend.';
+      btn.textContent   = "Confirm I can't make it →";
+      btn.style.background = 'rgba(230,59,46,0.15)';
+      btn.style.color      = 'var(--color-red-val)';
     }
 
     // Scroll submit bar into view smoothly

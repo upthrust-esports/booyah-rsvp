@@ -143,6 +143,11 @@
   .submit-btn:hover   { opacity: .9; }
   .submit-btn:active  { transform: scale(.98); }
   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .submit-btn.no-btn {
+    background: rgba(230,59,46,0.15) !important;
+    color: var(--color-red-val) !important;
+    border: 1px solid rgba(230,59,46,0.3);
+  }
 
   .detail-row { display: flex; align-items: flex-start; gap: 12px; padding: .65rem 0; border-bottom: 0.5px solid var(--color-border); }
   .detail-row:last-child { border-bottom: none; }
@@ -236,10 +241,8 @@
     -->
     <div class="submit-bar" id="submitBar">
       <div class="submit-bar-label" id="submitBarLabel"></div>
-      <div class="submit-bar-hint">Add your pincode above (optional), then confirm.</div>
-      <button class="submit-btn" id="submitBtn" onclick="confirmSubmit()">
-        Confirm my response →
-      </button>
+      <div class="submit-bar-hint" id="submitBarHint"></div>
+      <button class="submit-btn" id="submitBtn" onclick="confirmSubmit()"></button>
     </div>
   </div>
 
