@@ -55,18 +55,18 @@
   .status-bar .s-time { font-size: 11px; opacity: .7; margin-top: 1px; }
   .sec-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--color-muted); margin-bottom: .75rem; }
   .rsvp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: .75rem; }
-  .rsvp-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 1.1rem .75rem; border-radius: 14px; cursor: pointer; transition: background .15s, border-color .15s, transform .1s, color .15s; }
+  .rsvp-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 1.1rem .75rem; border-radius: 14px; cursor: pointer; transition: background .15s, border-color .15s, transform .1s, color .15s; border: none; }
   .rsvp-btn:active { transform: scale(.97); }
-  .yesbtn { border: 1px solid var(--color-gold); color: #0C0A14; background: var(--color-gold); }
+  .yesbtn { border: 1px solid var(--color-gold) !important; color: #0C0A14; background: var(--color-gold); }
   .yesbtn .btn-label { color: #0C0A14; }
   .yesbtn .btn-sub { color: rgba(12,10,20,0.6); }
   .yesbtn .btn-icon-wrap { color: #0C0A14; }
-  .yesbtn:hover { background: #01a839ef; border-color: #01a839; }
-  .nobtn { border: 1px solid var(--color-gold); color: var(--color-gold); background: transparent; }
+  .yesbtn:hover { background: #01a839ef; border-color: #01a839 !important; }
+  .nobtn { border: 1px solid var(--color-gold) !important; color: var(--color-gold); background: transparent; }
   .nobtn .btn-label { color: var(--color-gold); }
   .nobtn .btn-sub { color: var(--color-muted); }
   .nobtn .btn-icon-wrap { color: var(--color-gold); }
-  .nobtn:hover { background: var(--color-red-bg); border-color: var(--color-red-val); }
+  .nobtn:hover { background: var(--color-red-bg); border-color: var(--color-red-val) !important; }
   .nobtn:hover .btn-label { color: var(--color-red-val); }
   .nobtn:hover .btn-icon-wrap { color: var(--color-red-val); }
   .rsvp-btn.yes-active { background: var(--color-green-bg) !important; border: 1px solid rgba(46,204,130,0.5) !important; }
@@ -79,6 +79,8 @@
   .btn-icon-wrap { display: flex; align-items: center; justify-content: center; }
   .btn-label { font-size: 15px; font-weight: 600; }
   .btn-sub { font-size: 11px; text-align: center; }
+
+  /* ── Pincode ── */
   .pincode-wrap { margin-bottom: .75rem; }
   .pincode-input {
     width: 100%;
@@ -98,8 +100,50 @@
   .pincode-input::placeholder { letter-spacing: 0; }
   .pincode-error { display: none; color: var(--color-red-val); font-size: 11px; margin-top: 4px; }
   .pincode-hint { font-size: 9px; color: var(--color-muted); margin-top: 4px; }
+
   .loading-state { display: none; text-align: center; padding: .75rem; font-size: 13px; color: var(--color-muted); }
   .error-box { display: none; background: var(--color-red-bg); border: 0.5px solid rgba(230,59,46,0.3); color: var(--color-red-val); padding: .65rem .9rem; border-radius: 8px; font-size: 13px; margin-top: .5rem; }
+
+  /* ── Submit bar — appears after Yes/No is selected ── */
+  .submit-bar {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 0.5px solid var(--color-border2);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-top: .75rem;
+  }
+  .submit-bar-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .submit-bar-hint {
+    font-size: 11px;
+    color: var(--color-muted);
+    text-align: center;
+    margin-top: -4px;
+  }
+  .submit-btn {
+    width: 100%;
+    padding: .85rem 1rem;
+    border-radius: 12px;
+    border: none;
+    background: var(--color-gold);
+    color: #0C0A14;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+    letter-spacing: .2px;
+  }
+  .submit-btn:hover   { opacity: .9; }
+  .submit-btn:active  { transform: scale(.98); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
   .detail-row { display: flex; align-items: flex-start; gap: 12px; padding: .65rem 0; border-bottom: 0.5px solid var(--color-border); }
   .detail-row:last-child { border-bottom: none; }
   .detail-icon { width: 34px; height: 34px; flex-shrink: 0; border-radius: 8px; background: var(--color-surface2); border: 0.5px solid var(--color-border); display: flex; align-items: center; justify-content: center; color: var(--color-gold); }
@@ -123,6 +167,7 @@
     <div class="banner-fade"></div>
   </div>
 
+  <!-- Attendee card -->
   <div class="card">
     <div class="attendee-row">
       <div class="avatar" id="avatarEl">–</div>
@@ -133,6 +178,7 @@
     </div>
   </div>
 
+  <!-- Status bars (shown after confirmed) -->
   <div class="status-bar yes-bar" id="yesBar">
     <span class="s-icon"><i data-lucide="circle-check" class="icon-20"></i></span>
     <div>
@@ -140,7 +186,6 @@
       <div class="s-time" id="yesTime">–</div>
     </div>
   </div>
-
   <div class="status-bar no-bar" id="noBar">
     <span class="s-icon"><i data-lucide="circle-x" class="icon-20"></i></span>
     <div>
@@ -149,23 +194,25 @@
     </div>
   </div>
 
+  <!-- RSVP card -->
   <div class="card">
     <div class="sec-label">Confirm your attendance</div>
 
+    <!-- Yes / No buttons — clicking stages the response, doesn't submit yet -->
     <div class="rsvp-grid">
-      <button class="rsvp-btn yesbtn" id="yesBtn" onclick="submitRSVP('YES')">
+      <button class="rsvp-btn yesbtn" id="yesBtn" onclick="stageResponse('YES')">
         <span class="btn-icon-wrap"><i data-lucide="party-popper" class="icon-22"></i></span>
         <span class="btn-label">Yes, I'm in!</span>
         <span class="btn-sub">See you on the red carpet</span>
       </button>
-      <button class="rsvp-btn nobtn" id="noBtn" onclick="submitRSVP('NO')">
+      <button class="rsvp-btn nobtn" id="noBtn" onclick="stageResponse('NO')">
         <span class="btn-icon-wrap"><i data-lucide="circle-slash-2" class="icon-22"></i></span>
         <span class="btn-label">Can't make it</span>
         <span class="btn-sub">Let the team know</span>
       </button>
     </div>
 
-    <!-- Pincode — optional -->
+    <!-- Pincode — optional, fills before submitting -->
     <div class="pincode-wrap">
       <label class="sec-label" style="display:block;margin-bottom:.5rem;">Pincode</label>
       <input
@@ -177,13 +224,26 @@
         oninput="this.value=this.value.replace(/[^0-9]/g,'')"
       >
       <div class="pincode-error" id="pincodeError">Please enter a valid 6-digit pincode.</div>
-      <div class="pincode-hint">To better plan free transport from nearest metro stations - Knowledge Park 2 and Pari Chowk.</div>
+      <div class="pincode-hint">To better plan free transport from nearest metro stations — Knowledge Park 2 and Pari Chowk.</div>
     </div>
 
     <div class="loading-state" id="loadingEl">Saving your response…</div>
-    <div class="error-box" id="errorBox"></div>
+    <div class="error-box"    id="errorBox"></div>
+
+    <!--
+      Submit bar — hidden until Yes or No is selected.
+      Shows a label confirming the choice + the final Submit button.
+    -->
+    <div class="submit-bar" id="submitBar">
+      <div class="submit-bar-label" id="submitBarLabel"></div>
+      <div class="submit-bar-hint">Add your pincode above (optional), then confirm.</div>
+      <button class="submit-btn" id="submitBtn" onclick="confirmSubmit()">
+        Confirm my response →
+      </button>
+    </div>
   </div>
 
+  <!-- Event details card -->
   <div class="card">
     <div class="font-display" style="font-size:22px;letter-spacing:1px;color:var(--color-body);margin-bottom:1rem;">Event Details</div>
     <div class="detail-row">
@@ -229,18 +289,12 @@
   <div class="footer"><span>The Booyah Awards 2026</span></div>
 </div>
 
-<!--
-  Config block — passes Apps Script URL to rsvp.js without exposing it
-  in the main HTML or requiring an extra API call.
-  Replace the scriptUrl value with your deployed Apps Script URL.
--->
+<!-- Config: passes Apps Script URL to rsvp.js -->
 <script>
   window.__RSVP_CONFIG__ = {
     scriptUrl: 'https://script.google.com/macros/s/AKfycbyzOICbUCLU68acEaJhExudJW5rGgfjIvnNwZUCWmRYE1Rlv7z7RgmvAuOEwmUuyPW3HA/exec'
   };
 </script>
-
-<!-- Load Lucide first (CDN), then our script -->
 <script src="/rsvp.js"></script>
 
 </body>
