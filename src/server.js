@@ -1,19 +1,18 @@
 require('dotenv').config();
-const express  = require('express');
-const cors     = require('cors');
-const path     = require('path');
-const multer   = require('multer');
-const { parse } = require('csv-parse/sync');
-const axios    = require('axios');
+const express    = require('express');
+const cors       = require('cors');
+const path       = require('path');
+const multer     = require('multer');
+const { parse }  = require('csv-parse/sync');
+const axios      = require('axios');
 const nodemailer = require('nodemailer');
-const fs       = require('fs');
+const fs         = require('fs');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
 // ─── In-memory sent state (synced from Google Sheet on startup) ───
 // Structure: Map<txnId, { wa: bool, email: bool }>
-// This is the dedup guard — if server restarts, it re-fetches from sheet
 let sentState = new Map();
 
 // ─── Middleware ───────────────────────────────────────────────────
@@ -35,15 +34,13 @@ function adminAuth(req, res, next) {
 }
 
 // ═════════════════════════════════════════════════════════════════
-// PUBLIC ROUTES (called by rsvp.html — attendee facing)
+// PUBLIC ROUTES
 // ═════════════════════════════════════════════════════════════════
 
-// Public config endpoint — safe to expose (script URL is already public)
 app.get('/api/config', (req, res) => {
   res.json({ GOOGLE_SCRIPT_URL: process.env.GOOGLE_SCRIPT_URL });
 });
 
-// Proxy to Google Apps Script — keeps the script URL secret from client
 app.get('/api/rsvp/status', async (req, res) => {
   try {
     const { tid } = req.query;
@@ -74,7 +71,7 @@ app.post('/api/rsvp/respond', async (req, res) => {
 });
 
 // ═════════════════════════════════════════════════════════════════
-// ADMIN ROUTES (called by admin.html — protected)
+// ADMIN ROUTES
 // ═════════════════════════════════════════════════════════════════
 
 // ── Parse & deduplicate CSV ───────────────────────────────────────
@@ -85,7 +82,6 @@ app.post('/api/admin/parse-csv', adminAuth, upload.single('csv'), (req, res) => 
     const text    = req.file.buffer.toString('utf-8');
     const records = parse(text, { columns: true, skip_empty_lines: true, trim: true });
 
-    // Deduplicate by Transaction ID — keep first row per txn
     const seen = new Map();
     let rawCount = 0;
 
@@ -105,28 +101,21 @@ app.post('/api/admin/parse-csv', adminAuth, upload.single('csv'), (req, res) => 
         phone,
         ticketName:  (r['Ticket Name']  || '').trim(),
         ticketGroup: (r['Ticket Group'] || '').trim(),
+        pincode:     '',   // filled later from sheet sync
         waSent:      false,
         emailSent:   false,
       });
     }
 
-    // Filter out contacts with no email AND no phone
     const contacts = Array.from(seen.values()).filter(c => c.email || c.phone);
     const duped    = rawCount - contacts.length;
 
-    // Merge with current sent state from memory
     contacts.forEach(c => {
       const s = sentState.get(c.txnId);
       if (s) { c.waSent = s.wa; c.emailSent = s.email; }
     });
 
-    res.json({
-      status:   'ok',
-      contacts,
-      rawCount,
-      unique:   contacts.length,
-      duped,
-    });
+    res.json({ status: 'ok', contacts, rawCount, unique: contacts.length, duped });
   } catch (e) {
     console.error('CSV parse error:', e.message);
     res.json({ status: 'error', message: e.message });
@@ -140,7 +129,6 @@ app.get('/api/admin/sent-state', adminAuth, async (req, res) => {
       params: { action: 'get_sent' },
       timeout: 15000
     });
-    // Cache in server memory
     if (r.data.sentMap) {
       sentState = new Map(Object.entries(r.data.sentMap));
       console.log(`Synced ${sentState.size} sent records from sheet`);
@@ -170,16 +158,15 @@ app.post('/api/admin/send-wa', adminAuth, async (req, res) => {
   // Build RSVP link
   const link = buildRsvpLink({ txnId, name, email, ticketName, src: 'wa' });
 
-  // Build message
-  const msg = (process.env.WA_TEMPLATE || 'Hi {name}, confirm your attendance: {link}')
-    .replace(/{name}/g, name || 'there')
-    .replace(/{link}/g, link)
-    .replace(/\\n/g, '\n');
+  // Extract dynamic URL suffix for Meta template button
+  // Meta stores the base URL; we pass only the query string part
+  const baseUrl   = (process.env.RSVP_PAGE_URL || `http://localhost:${PORT}/rsvp.html`).replace(/\/$/, '');
+  const urlSuffix = link.replace(baseUrl, ''); // → ?tid=...&name=...&email=...&pass=...&src=wa
 
   // Normalize phone to international format
   let normalizedPhone = phone.replace(/[^\d]/g, '');
-  if (normalizedPhone.startsWith('0'))   normalizedPhone = '91' + normalizedPhone.slice(1);
-  if (normalizedPhone.length === 10)     normalizedPhone = '91' + normalizedPhone;
+  if (normalizedPhone.startsWith('0'))  normalizedPhone = '91' + normalizedPhone.slice(1);
+  if (normalizedPhone.length === 10)    normalizedPhone = '91' + normalizedPhone;
 
   try {
     const waRes = await axios.post(
@@ -187,8 +174,31 @@ app.post('/api/admin/send-wa', adminAuth, async (req, res) => {
       {
         messaging_product: 'whatsapp',
         to:   normalizedPhone,
-        type: 'text',
-        text: { body: msg },
+        type: 'template',
+        template: {
+          name:     process.env.WA_TEMPLATE_NAME || 'rsvp_invite',
+          language: { code: 'en' },
+          components: [
+            // ── Body variables ───────────────────────────────────
+            {
+              type: 'body',
+              parameters: [
+                { type: 'text', text: name       || 'Guest' }, // {{1}} → attendee name
+                { type: 'text', text: ticketName || 'Pass'  }, // {{2}} → ticket/pass name
+              ]
+            },
+            // ── CTA button — dynamic URL suffix ─────────────────
+            // Meta appends this to the base URL defined in the template
+            {
+              type:     'button',
+              sub_type: 'url',
+              index:    '0',
+              parameters: [
+                { type: 'text', text: urlSuffix }
+              ]
+            }
+          ]
+        }
       },
       {
         headers: {
@@ -201,12 +211,10 @@ app.post('/api/admin/send-wa', adminAuth, async (req, res) => {
 
     const msgId = waRes.data?.messages?.[0]?.id || '';
 
-    // Update in-memory sent state
     const cur = sentState.get(txnId) || { wa: false, email: false };
     cur.wa = true;
     sentState.set(txnId, cur);
 
-    // Persist to Google Sheet (fire and forget — don't block response)
     persistSentToSheet({ txnId, name, email, phone, channel: 'wa', ticketName, msgId });
 
     res.json({ status: 'sent', msgId });
@@ -221,7 +229,6 @@ app.post('/api/admin/send-wa', adminAuth, async (req, res) => {
 app.post('/api/admin/send-email', adminAuth, async (req, res) => {
   const { txnId, name, email, ticketName } = req.body;
 
-  // Server-side dedup check
   const already = sentState.get(txnId);
   if (already?.email) {
     return res.json({ status: 'skip', reason: 'Already sent via Email' });
@@ -232,10 +239,8 @@ app.post('/api/admin/send-email', adminAuth, async (req, res) => {
     return res.json({ status: 'error', reason: 'Email not configured' });
   }
 
-  const link = buildRsvpLink({ txnId, name, email, ticketName, src: 'email' });
-
-  // Read email template and inject values
-  let htmlBody = getEmailHtml(name, ticketName, link);
+  const link    = buildRsvpLink({ txnId, name, email, ticketName, src: 'email' });
+  const htmlBody = getEmailHtml(name, ticketName, link);
 
   try {
     const transporter = nodemailer.createTransport({
@@ -255,12 +260,10 @@ app.post('/api/admin/send-email', adminAuth, async (req, res) => {
       html:    htmlBody,
     });
 
-    // Update in-memory sent state
     const cur = sentState.get(txnId) || { wa: false, email: false };
     cur.email = true;
     sentState.set(txnId, cur);
 
-    // Persist to Google Sheet
     persistSentToSheet({ txnId, name, email, phone: '', channel: 'email', ticketName, msgId: info.messageId });
 
     res.json({ status: 'sent', msgId: info.messageId });
@@ -292,38 +295,25 @@ function buildRsvpLink({ txnId, name, email, ticketName, src }) {
 // ── Email HTML builder ────────────────────────────────────────────
 function getEmailHtml(name, ticketName, rsvpLink) {
   const templatePath = path.join(__dirname, '../public/rsvp_email_template.html');
- 
-  // Build the base RSVP URL with all params baked in
-  // rsvpLink already contains ?tid=...&name=...&email=...&pass=...&src=email
-  // We just need to append &confirm=YES or &confirm=NO — done in the template
- 
+
   if (fs.existsSync(templatePath)) {
     return fs.readFileSync(templatePath, 'utf-8')
-      // Text placeholders
       .replace(/{{NAME}}/g,       name       || 'there')
       .replace(/{{PASS}}/g,       ticketName || 'Booyah Pass')
       .replace(/{{TICKET_ID}}/g,  extractParam(rsvpLink, 'tid'))
- 
-      // URL-encoded placeholders used inside the href query strings
       .replace(/{{NAME_ENC}}/g,   encodeURIComponent(name       || ''))
       .replace(/{{EMAIL_ENC}}/g,  encodeURIComponent(extractParam(rsvpLink, 'email') || ''))
       .replace(/{{PASS_ENC}}/g,   encodeURIComponent(ticketName || 'Booyah Pass'))
- 
-      // Keep legacy YES/NO link placeholders working too (in case you switch back)
       .replace(/{{RSVP_YES_LINK}}/g, rsvpLink + '&confirm=YES')
       .replace(/{{RSVP_NO_LINK}}/g,  rsvpLink + '&confirm=NO')
- 
-      // Unsubscribe — replace with your real unsubscribe URL if you have one
       .replace(/{{UNSUBSCRIBE_LINK}}/g, '#');
   }
- 
-  // Minimal fallback if template file missing
+
   return `<p>Hi ${name},</p>
 <p>Confirm your attendance for <strong>The Booyah Awards 2026</strong>:</p>
 <p><a href="${rsvpLink}&confirm=YES">Yes, I'll be there</a> &nbsp;|&nbsp; <a href="${rsvpLink}&confirm=NO">Can't make it</a></p>`;
 }
- 
-// Helper — pull a param value out of a URL string
+
 function extractParam(url, key) {
   try {
     return new URL(url).searchParams.get(key) || '';
@@ -346,14 +336,34 @@ app.get('/health', (req, res) => {
   });
 });
 
+// ── Bulk mark sent ────────────────────────────────────────────────
+app.post('/api/admin/bulk-mark-sent', adminAuth, async (req, res) => {
+  const { records } = req.body;
+  if (!records?.length) return res.json({ status: 'ok', written: 0 });
+  try {
+    const r = await axios.post(process.env.GOOGLE_SCRIPT_URL,
+      { action: 'bulk_mark_sent', records },
+      { timeout: 15000 }
+    );
+    records.forEach(r => {
+      const cur = sentState.get(r.txnId) || { wa: false, email: false };
+      if (r.channel === 'wa')    cur.wa    = true;
+      if (r.channel === 'email') cur.email = true;
+      sentState.set(r.txnId, cur);
+    });
+    res.json(r.data);
+  } catch (e) {
+    res.json({ status: 'error', message: e.message });
+  }
+});
+
 // ─── Start server ────────────────────────────────────────────────
 app.listen(PORT, async () => {
   console.log(`\n🚀 Booyah RSVP server running on http://localhost:${PORT}`);
-  console.log(`   RSVP page  → http://localhost:${PORT}/rsvp.html`);
+  console.log(`   RSVP page   → http://localhost:${PORT}/rsvp.html`);
   console.log(`   Admin panel → http://localhost:${PORT}/admin.html`);
   console.log(`   Health      → http://localhost:${PORT}/health\n`);
 
-  // On startup, sync sent state from Google Sheet into memory
   if (process.env.GOOGLE_SCRIPT_URL) {
     try {
       const r = await axios.get(process.env.GOOGLE_SCRIPT_URL, {
@@ -366,27 +376,5 @@ app.listen(PORT, async () => {
     } catch (e) {
       console.warn('⚠️  Could not sync sent state on startup:', e.message);
     }
-  }
-});
-
-// ── Bulk mark sent (called from admin after a send run) ──────────
-app.post('/api/admin/bulk-mark-sent', adminAuth, async (req, res) => {
-  const { records } = req.body;
-  if (!records?.length) return res.json({ status: 'ok', written: 0 });
-  try {
-    const r = await axios.post(process.env.GOOGLE_SCRIPT_URL,
-      { action: 'bulk_mark_sent', records },
-      { timeout: 15000 }
-    );
-    // Also update in-memory state
-    records.forEach(r => {
-      const cur = sentState.get(r.txnId) || { wa: false, email: false };
-      if (r.channel === 'wa')    cur.wa    = true;
-      if (r.channel === 'email') cur.email = true;
-      sentState.set(r.txnId, cur);
-    });
-    res.json(r.data);
-  } catch (e) {
-    res.json({ status: 'error', message: e.message });
   }
 });

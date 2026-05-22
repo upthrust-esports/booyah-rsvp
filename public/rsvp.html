@@ -79,6 +79,28 @@
   .btn-icon-wrap { display: flex; align-items: center; justify-content: center; }
   .btn-label { font-size: 15px; font-weight: 600; }
   .btn-sub { font-size: 11px; text-align: center; }
+
+  /* ── Pincode ── */
+  .pincode-wrap { margin-bottom: .75rem; }
+  .pincode-input {
+    width: 100%;
+    background: var(--color-surface2);
+    border: 1px solid var(--color-border2);
+    border-radius: 10px;
+    padding: .6rem .9rem;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--color-body);
+    outline: none;
+    transition: border-color .15s;
+    letter-spacing: 3px;
+  }
+  .pincode-input:focus { border-color: var(--color-gold); }
+  .pincode-input:disabled { opacity: 0.5; cursor: not-allowed; }
+  .pincode-input::placeholder { letter-spacing: 0; }
+  .pincode-error { display: none; color: var(--color-red-val); font-size: 11px; margin-top: 4px; }
+  .pincode-hint { font-size: 11px; color: var(--color-muted); margin-top: 4px; }
+
   .loading-state { display: none; text-align: center; padding: .75rem; font-size: 13px; color: var(--color-muted); }
   .error-box { display: none; background: var(--color-red-bg); border: 0.5px solid rgba(230,59,46,0.3); color: var(--color-red-val); padding: .65rem .9rem; border-radius: 8px; font-size: 13px; margin-top: .5rem; }
   .meta-grid { background: var(--color-surface2); border-radius: 10px; padding: .75rem; display: flex; flex-direction: column; gap: 6px; margin-top: .75rem; }
@@ -137,6 +159,7 @@
 
   <div class="card">
     <div class="sec-label">Confirm your attendance</div>
+
     <div class="rsvp-grid">
       <button class="rsvp-btn yesbtn" id="yesBtn" onclick="submitRSVP('YES')">
         <span class="btn-icon-wrap"><i data-lucide="party-popper" class="icon-22"></i></span>
@@ -149,8 +172,30 @@
         <span class="btn-sub">Let the team know</span>
       </button>
     </div>
+
+    <!-- ── Pincode — optional ── -->
+    <div class="pincode-wrap">
+      <label class="sec-label" style="display:block;margin-bottom:.5rem;">
+        Pincode
+        <span style="color:var(--color-muted);font-size:10px;text-transform:none;letter-spacing:0;margin-left:4px;">(optional)</span>
+      </label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input
+          type="tel"
+          id="pincodeInput"
+          class="pincode-input"
+          maxlength="6"
+          placeholder="Enter 6-digit pincode"
+          oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+        >
+      </div>
+      <div class="pincode-error" id="pincodeError">Please enter a valid 6-digit pincode.</div>
+      <div class="pincode-hint">Helps us plan logistics for your area.</div>
+    </div>
+
     <div class="loading-state" id="loadingEl">Saving your response…</div>
     <div class="error-box" id="errorBox"></div>
+
     <div class="meta-grid">
       <div class="meta-row">
         <span class="meta-key"><i data-lucide="ticket" class="icon-16"></i> Ticket ID</span>
@@ -163,6 +208,10 @@
       <div class="meta-row">
         <span class="meta-key"><i data-lucide="send" class="icon-16"></i> Channel</span>
         <span class="meta-val" id="sourceEl">–</span>
+      </div>
+      <div class="meta-row" id="pincodeMetaRow" style="display:none;">
+        <span class="meta-key"><i data-lucide="map-pin" class="icon-16"></i> Pincode</span>
+        <span class="meta-val" id="pincodeMetaEl">–</span>
       </div>
     </div>
   </div>
@@ -239,7 +288,7 @@
 
   const preConfirm = p.get('confirm');
 
-  // ── LOAD STATUS — plain GET, no CORS issues ───────────────────
+  // ── LOAD STATUS ───────────────────────────────────────────────
   async function loadStatus() {
     try {
       const url = `${SCRIPT_URL}?action=get&tid=${encodeURIComponent(tid)}`;
@@ -259,15 +308,36 @@
     document.getElementById('noTime').textContent  = 'Last updated: ' + c.time;
     document.getElementById('yesBtn').classList.toggle('yes-active', c.response === 'YES');
     document.getElementById('noBtn').classList.toggle('no-active',   c.response === 'NO');
+
+    // Show saved pincode in meta grid
+    if (c.pincode) {
+      document.getElementById('pincodeMetaEl').textContent    = c.pincode;
+      document.getElementById('pincodeMetaRow').style.display = 'flex';
+      // Pre-fill and lock pincode input if already saved
+      const inp = document.getElementById('pincodeInput');
+      inp.value    = c.pincode;
+      inp.disabled = true;
+    }
   }
 
-  // ── SUBMIT RSVP — no-cors POST (bypasses CORS preflight) ─────
-  // Apps Script doesn't respond to OPTIONS preflight, so we use
-  // mode:'no-cors' + text/plain body (no preflight triggered).
-  // We can't read the response (opaque), so we show success optimistically.
+  // ── SUBMIT RSVP ───────────────────────────────────────────────
   let busy = false;
   async function submitRSVP(resp) {
     if (busy) return;
+
+    // Validate pincode if filled — must be exactly 6 digits
+    const pincodeVal = document.getElementById('pincodeInput').value.trim();
+    const errEl      = document.getElementById('pincodeError');
+    const inpEl      = document.getElementById('pincodeInput');
+
+    if (pincodeVal && pincodeVal.length !== 6) {
+      errEl.style.display = 'block';
+      inpEl.style.borderColor = 'var(--color-red-val)';
+      return;
+    }
+    errEl.style.display    = 'none';
+    inpEl.style.borderColor = '';
+
     busy = true;
     const yb = document.getElementById('yesBtn');
     const nb = document.getElementById('noBtn');
@@ -279,12 +349,12 @@
     yb.classList.remove('yes-active');
     nb.classList.remove('no-active');
 
-    // URLSearchParams body — Apps Script reads via e.parameter
     const body = new URLSearchParams({
       action:   'rsvp',
       tid, name, email, pass,
       response: resp,
       source:   src,
+      pincode:  pincodeVal,
       ua:       navigator.userAgent.slice(0, 200),
       ts:       new Date().toISOString()
     });
@@ -292,16 +362,24 @@
     try {
       await fetch(SCRIPT_URL, {
         method:  'POST',
-        mode:    'no-cors',           // ← skips OPTIONS preflight
+        mode:    'no-cors',
         headers: { 'Content-Type': 'text/plain' },
         body:    body.toString()
       });
 
-      // Can't read opaque response — show success optimistically
       document.getElementById('loadingEl').style.display = 'none';
+
+      // Lock pincode after successful submit
+      if (pincodeVal) {
+        inpEl.disabled = true;
+        document.getElementById('pincodeMetaEl').textContent    = pincodeVal;
+        document.getElementById('pincodeMetaRow').style.display = 'flex';
+      }
+
       showStatus({
         response: resp,
-        time: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+        pincode:  pincodeVal,
+        time:     new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
       });
 
     } catch(e) {
