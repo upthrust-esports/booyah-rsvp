@@ -196,7 +196,8 @@
         </div>
       </div>
 
-      <div class="hidden bg-[--color-surface] border border-[--color-border] rounded-xl p-5" id="send-progress-card">
+      <!-- RSVP Send Progress -->
+      <div class="hidden bg-[--color-surface] border border-[--color-border] rounded-xl p-5 mb-4" id="send-progress-card">
         <div class="text-[13px] font-semibold mb-3">📤 Sending Progress</div>
         <div class="flex justify-between text-[12px] text-[--color-muted] mb-1.5">
           <span id="prog-label">0 / 0 sent</span><span id="prog-pct">0%</span>
@@ -208,6 +209,75 @@
           <span class="text-[--color-red-val]">❌ <span id="prog-fail">0</span> failed</span>
         </div>
         <div class="space-y-1 max-h-44 overflow-y-auto" id="send-log-live"></div>
+      </div>
+
+      <!-- ── REMINDER SEND CARD ── -->
+      <div class="bg-[--color-surface] border border-[--color-border] rounded-xl p-5 mt-4" id="reminder-card">
+        <div class="text-[13px] font-semibold mb-1">📨 Send Reminder Email</div>
+        <div class="text-[12px] text-[--color-muted] mb-4">
+          Sends variant-specific reminder to all contacts based on ticket group and RSVP response status.<br>
+          <span class="text-[--color-purple-lt]">A</span> — Free, responded &nbsp;·&nbsp;
+          <span class="text-[--color-gold]">B</span> — Free, not responded &nbsp;·&nbsp;
+          <span class="text-[--color-green]">C</span> — Paid (UID form)
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 mb-5">
+          <div class="bg-[--color-surface2] border border-[--color-border] rounded-xl p-3">
+            <div class="text-[10px] uppercase tracking-[1px] text-[--color-muted] mb-1">Variant A</div>
+            <div class="text-[20px] font-bold text-[--color-purple-lt]" id="reminder-count-a">—</div>
+            <div class="text-[10px] text-[--color-muted] mt-0.5">Free · responded</div>
+          </div>
+          <div class="bg-[--color-surface2] border border-[--color-border] rounded-xl p-3">
+            <div class="text-[10px] uppercase tracking-[1px] text-[--color-muted] mb-1">Variant B</div>
+            <div class="text-[20px] font-bold text-[--color-gold]" id="reminder-count-b">—</div>
+            <div class="text-[10px] text-[--color-muted] mt-0.5">Free · not responded</div>
+          </div>
+          <div class="bg-[--color-surface2] border border-[--color-border] rounded-xl p-3">
+            <div class="text-[10px] uppercase tracking-[1px] text-[--color-muted] mb-1">Variant C</div>
+            <div class="text-[20px] font-bold text-[--color-green]" id="reminder-count-c">—</div>
+            <div class="text-[10px] text-[--color-muted] mt-0.5">Paid</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <button
+            class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[--color-purple-lt] text-[#0C0A14] text-[13px] font-semibold cursor-pointer hover:opacity-90 active:scale-95 transition-all"
+            id="reminder-btn"
+            onclick="startReminderSend()">
+            📨 Send Reminder Emails
+          </button>
+          <button
+            class="hidden flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[--color-red-bg] border border-[rgba(230,59,46,0.28)] text-[--color-red-val] text-[13px] font-semibold cursor-pointer hover:opacity-90 active:scale-95 transition-all"
+            id="reminder-stop-btn"
+            onclick="stopReminderSend()">
+            ⏹ Stop
+          </button>
+          <button
+            class="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[--color-border2] text-[--color-muted] text-[13px] font-medium cursor-pointer hover:bg-[--color-surface2] hover:text-[--color-body] transition-all"
+            onclick="fetchRsvpResponses()">
+            🔄 Fetch RSVP Responses
+          </button>
+        </div>
+        <div class="text-[11px] text-[--color-muted] mt-2" id="rsvp-responses-status">RSVP responses not fetched yet — click Fetch before sending.</div>
+      </div>
+
+      <!-- ── REMINDER PROGRESS CARD ── -->
+      <div class="hidden bg-[--color-surface] border border-[--color-border] rounded-xl p-5 mt-3" id="reminder-progress-card">
+        <div class="text-[13px] font-semibold mb-3">📨 Reminder Send Progress</div>
+        <div class="flex justify-between text-[12px] text-[--color-muted] mb-1.5">
+          <span id="reminder-prog-label">0 / 0 sent</span>
+          <span id="reminder-prog-pct">0%</span>
+        </div>
+        <div class="progress-wrap mb-3"><div class="progress-bar h-full rounded-full" id="reminder-prog-bar" style="width:0%"></div></div>
+        <div class="flex gap-4 text-[12px] mb-3">
+          <span class="text-[--color-green]">✅ <span id="reminder-prog-ok">0</span> sent</span>
+          <span class="text-[--color-muted2]">⏭ <span id="reminder-prog-skip">0</span> skipped</span>
+          <span class="text-[--color-red-val]">❌ <span id="reminder-prog-fail">0</span> failed</span>
+          <span class="text-[--color-purple-lt]">A: <span id="reminder-prog-a">0</span></span>
+          <span class="text-[--color-gold]">B: <span id="reminder-prog-b">0</span></span>
+          <span class="text-[--color-green]">C: <span id="reminder-prog-c">0</span></span>
+        </div>
+        <div class="space-y-1 max-h-44 overflow-y-auto" id="reminder-log-live"></div>
       </div>
     </div>
 
@@ -283,7 +353,9 @@
           <code class="text-[--color-gold]">WA_TEMPLATE</code> — message text with {name} and {link}<br>
           <code class="text-[--color-gold]">SMTP_HOST / SMTP_USER / SMTP_PASS</code> — email config<br>
           <code class="text-[--color-gold]">RSVP_PAGE_URL</code> — your Render URL (used to build RSVP links)<br>
-          <code class="text-[--color-gold]">ADMIN_PASSWORD</code> — must match password above
+          <code class="text-[--color-gold]">ADMIN_PASSWORD</code> — must match password above<br>
+          <code class="text-[--color-gold]">UID_FORM_URL</code> — Google Form URL for paid ticket UID collection<br>
+          <code class="text-[--color-gold]">REMINDER_SUBJECT_A / B / C</code> — subject lines for each reminder variant
         </div>
       </div>
 
@@ -313,6 +385,11 @@ const PAGE_SIZE = 50;
 let chWA    = true;
 let chEmail = true;
 let cfg = { adminPassword: '', rsvpUrl: '' };
+
+// ── Reminder state ─────────────────────────────────────────────────
+let respondedTxnIds      = new Set();
+let rsvpResponsesFetched = false;
+let reminderStopFlag     = false;
 
 // ── Navigation ────────────────────────────────────────────────────
 function showPage(id) {
@@ -462,6 +539,7 @@ function updateSendPage() {
   document.getElementById('send-count').textContent   = pending.length;
   document.getElementById('already-sent').textContent = contacts.filter(c=>c.waSent||c.emailSent).length;
   updateWillSend();
+  if (rsvpResponsesFetched) updateReminderCounts();
 }
 
 function updateWillSend() {
@@ -570,8 +648,6 @@ async function sendEmailRecord(contact) {
   } catch(e) { return {status:'failed', note:e.message}; }
 }
 
-// buildLink handled server-side
-
 // ── Sheet sync ────────────────────────────────────────────────────
 async function loadSentStateFromSheet() {
   try {
@@ -590,10 +666,7 @@ async function loadSentStateFromSheet() {
 async function persistSent(contact, channel, msgId) {
   if (!cfg.adminPassword) return;
   try {
-    await fetch('/api/admin/send-wa'.replace('send-wa','send-wa'), cfg.adminPassword); // placeholder — actual call below
-    await fetch('/api/rsvp/status', {method:'GET'}); // keep-alive
-    // Real persist — fire and forget
-    fetch('/api/admin/sent-state', { // reuse route just to keep token; actual mark_sent is done in server.js already
+    fetch('/api/admin/sent-state', {
       method: 'GET', headers: {'x-admin-token': cfg.adminPassword}
     }).catch(()=>{});
   } catch(e) {}
@@ -609,6 +682,154 @@ async function bulkPersistSent(records) {
   } catch(e) { console.warn('bulkPersistSent failed:', e.message); }
 }
 
+// ── Reminder: fetch RSVP responses ───────────────────────────────
+async function fetchRsvpResponses() {
+  const statusEl = document.getElementById('rsvp-responses-status');
+  statusEl.textContent = 'Fetching RSVP responses from sheet…';
+  try {
+    const res  = await fetch('/api/admin/rsvp-responses', {
+      headers: { 'x-admin-token': cfg.adminPassword }
+    });
+    const data = await res.json();
+    if (data.status !== 'ok') {
+      statusEl.textContent = 'Error: ' + (data.message || 'Failed to fetch');
+      return;
+    }
+    respondedTxnIds      = new Set(data.respondedTxnIds || []);
+    rsvpResponsesFetched = true;
+    statusEl.textContent = `✓ Fetched ${respondedTxnIds.size} responded TxnIDs from sheet`;
+    updateReminderCounts();
+    toast(`Loaded ${respondedTxnIds.size} RSVP responses`, 'success');
+  } catch (e) {
+    statusEl.textContent = 'Error: ' + e.message;
+    toast('Failed to fetch RSVP responses', 'error');
+  }
+}
+
+// ── Reminder: determine variant ───────────────────────────────────
+function getReminderVariant(contact) {
+  const isPaid = (contact.ticketGroup || '').trim() === 'Tickets';
+  if (isPaid) return 'C';
+  return respondedTxnIds.has(contact.txnId) ? 'A' : 'B';
+}
+
+// ── Reminder: update variant counts ──────────────────────────────
+function updateReminderCounts() {
+  let a = 0, b = 0, c = 0;
+  contacts.forEach(contact => {
+    const v = getReminderVariant(contact);
+    if (v === 'A') a++;
+    else if (v === 'B') b++;
+    else c++;
+  });
+  document.getElementById('reminder-count-a').textContent = contacts.length ? a : '—';
+  document.getElementById('reminder-count-b').textContent = contacts.length ? b : '—';
+  document.getElementById('reminder-count-c').textContent = contacts.length ? c : '—';
+}
+
+// ── Reminder: start send ──────────────────────────────────────────
+async function startReminderSend() {
+  if (!contacts.length)       return toast('No contacts loaded', 'error');
+  if (!cfg.adminPassword)     return toast('Set admin password in Settings first', 'error');
+  if (!rsvpResponsesFetched)  return toast('Fetch RSVP responses first before sending', 'error');
+
+  reminderStopFlag = false;
+  document.getElementById('reminder-btn').classList.add('hidden');
+  document.getElementById('reminder-stop-btn').classList.remove('hidden');
+  document.getElementById('reminder-progress-card').classList.remove('hidden');
+  document.getElementById('reminder-log-live').innerHTML = '';
+
+  const queue     = contacts.filter(c => c.email);
+  const total     = queue.length;
+  const batchSize = parseInt(document.getElementById('batch-size').value) || 5;
+  let ok = 0, skip = 0, fail = 0, varA = 0, varB = 0, varC = 0;
+
+  for (let i = 0; i < total; i++) {
+    if (reminderStopFlag) break;
+
+    const contact = queue[i];
+    const variant = getReminderVariant(contact);
+    const result  = await sendReminderEmail(contact, variant);
+
+    if (result.status === 'sent') {
+      ok++;
+      if (variant === 'A') varA++;
+      else if (variant === 'B') varB++;
+      else varC++;
+    } else if (result.status === 'skip') {
+      skip++;
+    } else {
+      fail++;
+    }
+
+    addReminderLiveLog(contact.name, contact.email, variant, result.status, result.note);
+
+    const pct = Math.round(((i + 1) / total) * 100);
+    document.getElementById('reminder-prog-label').textContent = `${i + 1} / ${total}`;
+    document.getElementById('reminder-prog-pct').textContent   = pct + '%';
+    document.getElementById('reminder-prog-bar').style.width   = pct + '%';
+    document.getElementById('reminder-prog-ok').textContent    = ok;
+    document.getElementById('reminder-prog-skip').textContent  = skip;
+    document.getElementById('reminder-prog-fail').textContent  = fail;
+    document.getElementById('reminder-prog-a').textContent     = varA;
+    document.getElementById('reminder-prog-b').textContent     = varB;
+    document.getElementById('reminder-prog-c').textContent     = varC;
+
+    if ((i + 1) % batchSize === 0) await sleep(1000);
+  }
+
+  document.getElementById('reminder-btn').classList.remove('hidden');
+  document.getElementById('reminder-stop-btn').classList.add('hidden');
+  toast(`Reminder done! ${ok} sent · ${skip} skipped · ${fail} failed`, ok > 0 ? 'success' : 'info');
+}
+
+// ── Reminder: send one email ──────────────────────────────────────
+async function sendReminderEmail(contact, variant) {
+  if (!contact.email) return { status: 'skip', note: 'No email' };
+  try {
+    const res = await fetch('/api/admin/send-reminder', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': cfg.adminPassword },
+      body: JSON.stringify({
+        txnId:        contact.txnId,
+        name:         contact.name,
+        email:        contact.email,
+        ticketName:   contact.ticketName,
+        ticketGroup:  contact.ticketGroup,
+        hasResponded: respondedTxnIds.has(contact.txnId),
+      })
+    });
+    const data = await res.json();
+    if (data.status === 'sent')  return { status: 'sent',   note: `Variant ${data.variant} · ${data.msgId || ''}` };
+    if (data.status === 'skip')  return { status: 'skip',   note: data.reason };
+    return { status: 'failed', note: data.reason || 'Failed' };
+  } catch (e) {
+    return { status: 'failed', note: e.message };
+  }
+}
+
+// ── Reminder: stop ────────────────────────────────────────────────
+function stopReminderSend() {
+  reminderStopFlag = true;
+  document.getElementById('reminder-btn').classList.remove('hidden');
+  document.getElementById('reminder-stop-btn').classList.add('hidden');
+  toast('Reminder send stopped', 'info');
+}
+
+// ── Reminder: live log entry ──────────────────────────────────────
+function addReminderLiveLog(name, email, variant, status, note) {
+  const live      = document.getElementById('reminder-log-live');
+  const el        = document.createElement('div');
+  const colors    = { sent: 'border-l-[--color-green]', skip: 'border-l-[--color-muted2]', failed: 'border-l-[--color-red-val]' };
+  const varColors = { A: 'text-[--color-purple-lt]', B: 'text-[--color-gold]', C: 'text-[--color-green]' };
+  el.className = `flex items-center gap-2.5 px-3 py-1.5 bg-[--color-surface2] rounded border-l-2 ${colors[status] || ''} text-[12px]`;
+  el.innerHTML = `
+    <span class="flex-1 font-medium truncate">${name || email}</span>
+    <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[--color-surface] border border-[--color-border] ${varColors[variant]}">V-${variant}</span>
+    <span class="font-semibold ${status === 'sent' ? 'text-[--color-green]' : status === 'skip' ? 'text-[--color-muted2]' : 'text-[--color-red-val]'}">${status === 'sent' ? '✓' : status === 'skip' ? '⏭' : '✗'}</span>`;
+  live.insertBefore(el, live.firstChild);
+}
+
 // ── Log ───────────────────────────────────────────────────────────
 function addLiveLog(name, email, ch, status, note) {
   const entry = { time: new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}), name, email, ch, status, note };
@@ -619,7 +840,6 @@ function addLiveLog(name, email, ch, status, note) {
   el.className = `flex items-center gap-2.5 px-3 py-1.5 bg-[--color-surface2] rounded border-l-2 ${colors[status]||''} text-[12px]`;
   el.innerHTML = `<span class="flex-1 font-medium truncate">${name||email}</span><span class="text-[10px] text-[--color-muted] bg-[--color-surface] border border-[--color-border] px-1.5 py-0.5 rounded">${ch==='wa'?'📱 WA':'📧 Email'}</span><span class="font-semibold ${status==='sent'?'text-[--color-green]':status==='skip'?'text-[--color-muted2]':'text-[--color-red-val]'}">${status==='sent'?'✓':status==='skip'?'⏭':'✗'}</span>`;
   live.insertBefore(el, live.firstChild);
-  // Dashboard log
   const dl = document.getElementById('dashboard-log');
   if (dl.querySelector('.text-\\[--color-muted2\\]')) dl.innerHTML = '';
   dl.insertBefore(el.cloneNode(true), dl.firstChild);
